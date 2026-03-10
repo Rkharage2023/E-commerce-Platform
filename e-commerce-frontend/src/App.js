@@ -8,9 +8,10 @@ import {
 import { useSelector } from "react-redux";
 
 // Import Pages
+import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
-import ProductListPage from "./pages/ProductListPage";
-import ProductDetailPage from "./pages/ProductDetailPage";
+import ProductListPage from "./components/ProductListPage";
+import ProductDetailPage from "./components/ProductDetail";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import CartPage from "./pages/CartPage";
@@ -30,18 +31,19 @@ function App() {
     <Router>
       <div>
         {/* Navigation Bar */}
+        <Navbar />
         <Routes>
-          <Route path="/" element=<HomePage /> />
-          <Route path="/products" element=<ProductListPage /> />
-          <Route path="/products/:id" element=<ProductDetailPage /> />
-          <Route path="/login" element=<LoginPage /> />
-          <Route path="/register" element=<RegisterPage /> />
-          <Route path="/cart" element=<CartPage /> />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/products" element={<ProductListPage />} />
+          <Route path="/products/:id" element={<ProductDetailPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/cart" element={<CartPage />} />
 
           {/* Protected Route for Order History */}
           <Route
             path="/order-history"
-            element=<ProtectedRoute element=<OrderHistoryPage /> />
+            element={<ProtectedRoute element={<OrderHistoryPage />} />}
           />
           {/* Add more routes */}
         </Routes>
