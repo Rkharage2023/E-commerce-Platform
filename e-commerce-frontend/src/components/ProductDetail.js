@@ -58,25 +58,54 @@ function ProductDetail() {
   if (!product) return <div class="text-center py-10">Product not found.</div>;
 
   return (
-    <div class="container mx-auto p-4 flex flex-col md:flex-row items-center">
-      <img
-        src={product.imageUrl || "https://via.placeholder.com/500x400"}
-        alt={product.name}
-        class="w-full md:w-1/2 h-auto object-cover rounded-lg shadow-md mb-6 md:mb-0 md:mr-8"
-      />
-      <div class="md:w-1/2">
-        <h2 class="text-3xl font-bold mb-4">{product.name}</h2>
-        <p class="text-xl text-green-600 font-bold mb-6">
-          ${product.price.toFixed(2)}
-        </p>
-        <p class="text-gray-700 mb-6 leading-relaxed">{product.description}</p>
-        <button
-          onClick={handleAddToCart}
-          class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={!product} // Disable if product not loaded yet
+    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen py-16">
+      <div className="container mx-auto px-6">
+        <div
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8
+      flex flex-col md:flex-row items-center gap-10"
         >
-          Add to Cart
-        </button>
+          {/* Product Image */}
+
+          <img
+            src={product.imageUrl || "https://via.placeholder.com/500x400"}
+            alt={product.name}
+            className="w-full md:w-1/2 h-auto object-cover rounded-lg shadow-md"
+          />
+
+          {/* Product Details */}
+
+          <div className="md:w-1/2">
+            <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-white">
+              {product.name}
+            </h2>
+
+            <p className="text-2xl text-blue-600 dark:text-blue-400 font-bold mb-6">
+              ${product.price.toFixed(2)}
+            </p>
+
+            <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
+              {product.description}
+            </p>
+
+            <p className="mb-6 text-gray-600 dark:text-gray-300">
+              {product.countInStock > 0 ? (
+                <span className="text-green-500 font-semibold">In Stock</span>
+              ) : (
+                <span className="text-red-500 font-semibold">Out of Stock</span>
+              )}
+            </p>
+
+            <button
+              onClick={handleAddToCart}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold
+            hover:bg-blue-700 transition duration-300
+            disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!product}
+            >
+              Add To Cart
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

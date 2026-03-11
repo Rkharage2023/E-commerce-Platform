@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
 
 function ProductListPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        setLoading(true);
-        // Replace with your actual API endpoint
-        const response = await axios.get("http://localhost:5000/api/products");
-        setProducts(response.data);
-        setError(null);
-      } catch (err) {
-        setError("Failed to load products.");
-        setProducts([]);
-      } finally {
+        const res = await axios.get("http://localhost:5000/api/products");
+
+        setProducts(res.data);
+        setLoading(false);
+      } catch (error) {
+        console.log("Error fetching products");
         setLoading(false);
       }
     };
@@ -26,21 +22,27 @@ function ProductListPage() {
     fetchProducts();
   }, []);
 
-  if (loading) return <div class="text-center py-20">Loading products...</div>;
-  if (error) return <div class="text-center py-20 text-red-500">{error}</div>;
-
   return (
-    <div class="container mx-auto p-4">
-      <h1 class="text-4xl font-bold text-center my-8">Our Products</h1>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.length > 0 ? (
-          products.map((product) => (
-            <ProductCard key={product._id} product={product} />
-          ))
-        ) : (
-          <p class="text-center text-gray-600 col-span-full">
-            No products available.
+    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen py-12">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Page Title */}
+
+        <h1 className="text-4xl font-bold mb-10 text-gray-800 dark:text-white">
+          All Products
+        </h1>
+
+        {/* Loading */}
+
+        {loading ? (
+          <p className="text-gray-600 dark:text-gray-300">
+            Loading products...
           </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {products.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </div>
         )}
       </div>
     </div>
