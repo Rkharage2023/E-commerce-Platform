@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
+import { selectCartItems } from "../store/cartSlice";
+import { FaUserShield } from "react-icons/fa";
 
 function Navbar() {
   const dispatch = useDispatch();
@@ -16,6 +18,10 @@ function Navbar() {
       document.documentElement.classList.remove("dark");
     }
   }, [darkMode]);
+
+  const cartItems = useSelector(selectCartItems);
+
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -52,7 +58,18 @@ function Navbar() {
             to="/cart"
             className="text-gray-700 dark:text-gray-200 hover:text-blue-500 transition"
           >
-            Cart
+            🛒 Cart
+            {cartCount > 0 && (
+              <span className="ml-1 bg-red-500 text-white px-2 py-1 rounded-full text-xs">
+                {cartCount}
+              </span>
+            )}
+          </Link>
+          <Link
+            to="/orders"
+            className="text-gray-700 dark:text-gray-200 hover:text-blue-500 transition"
+          >
+            My Orders
           </Link>
 
           {/* LOGIN / LOGOUT LOGIC */}
@@ -96,6 +113,15 @@ function Navbar() {
           >
             {darkMode ? "☀ Light" : "🌙 Dark"}
           </button>
+
+          {/* ADMIN DASHBOARD ICON */}
+
+          <Link
+            to="/admin"
+            className="bg-purple-600 text-white px-3 py-1 rounded-lg hover:bg-purple-700"
+          >
+            Admin
+          </Link>
         </div>
       </div>
     </nav>

@@ -1,14 +1,18 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   selectCartItems,
   removeItem,
   updateQuantity,
+  clearCart,
 } from "../store/cartSlice";
+import defaultImage from "../assets/default-product.png";
 
 function CartPage() {
   const cartItems = useSelector(selectCartItems);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleRemove = (id) => {
     dispatch(removeItem(id));
@@ -47,7 +51,7 @@ function CartPage() {
 
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen py-12">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-6 ">
         <h1 className="text-4xl font-bold mb-10 text-gray-800 dark:text-white">
           Your Cart
         </h1>
@@ -64,7 +68,7 @@ function CartPage() {
               {/* Product Image */}
 
               <img
-                src={item.product.imageUrl || "https://via.placeholder.com/150"}
+                src={defaultImage}
                 alt={item.product.name}
                 className="w-32 h-32 object-cover rounded-lg"
               />
@@ -123,10 +127,16 @@ function CartPage() {
           </h2>
 
           <button
-            className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg
-            hover:bg-blue-700 transition"
+            onClick={() => navigate("/checkout")}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg"
           >
             Proceed to Checkout
+          </button>
+          <button
+            onClick={() => dispatch(clearCart())}
+            className="bg-red-500 text-white px-4 py-2 rounded ml-4"
+          >
+            Clear Cart
           </button>
         </div>
       </div>

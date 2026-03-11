@@ -1,82 +1,175 @@
 import React, { useState, useEffect } from "react";
-import { mockOrders } from "../mockData/orders"; // Import mock data
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectIsAuthenticated } from "../store/authSlice"; // Assuming you have this selector
-
-// Helper component to display individual order items
-function OrderItem({ order }) {
-  const formattedDate = new Date(order.orderDate).toLocaleDateString();
-
-  return (
-    <div class="border rounded-lg p-4 mb-6 shadow hover:shadow-lg transition-shadow duration-300">
-      <div class="flex justify-between items-center mb-4">
-        <span class="font-semibold">Order ID: #{order._id.substring(4)}</span>
-        <span class="text-sm text-gray-600">{formattedDate}</span>
-      </div>
-      <div class="mb-4">
-        {order.items.map((item) => (
-          <p key={item.productId} class="text-sm text-gray-700">
-            {item.quantity} x {item.name} - ${item.price.toFixed(2)}
-          </p>
-        ))}
-      </div>
-      <div class="flex justify-between items-center pt-4 border-t">
-        <span class="font-semibold">
-          Total: ${order.totalAmount.toFixed(2)}
-        </span>
-        <span class="text-sm font-medium py-1 px-3 rounded-full bg-green-100 text-green-800">
-          {order.status}
-        </span>
-      </div>
-    </div>
-  );
-}
+import axios from "axios";
 
 function OrderHistoryPage() {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const isAuthenticated = useSelector(selectIsAuthenticated);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate fetching data
     const fetchOrders = async () => {
-      setLoading(true);
-      // In a real app, you would use axiosInstance.get('/orders') here
-      // For simulation, we just use the mock data
       try {
-        // Simulate network delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        setOrders(mockOrders);
-      } catch (err) {
-        console.error("Failed to fetch orders:", err);
-        // Handle error appropriately
-      } finally {
-        setLoading(false);
+        const token = localStorage.getItem("jwtToken");
+
+        const res = await axios.get(
+          "http://localhost:5000/api/orders/myorders",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        setOrders(res.data);
+      } catch (error) {
+        console.error("Error fetching orders", error);
       }
     };
 
-    if (!isAuthenticated) {
-      // Redirect to login if not authenticated
-      navigate("/login");
-    } else {
-      fetchOrders();
-    }
-  }, [isAuthenticated, navigate]);
+    fetchOrders();
+  }, []);
 
-  if (loading) {
-    return <div class="text-center py-20">Loading your orders...</div>;
-  }
+  const cancelOrder = async (id) => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+
+      await axios.put(
+        `http://localhost:5000/api/orders/${id}/cancel`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      alert("Order cancelled successfully");
+
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === id ? { ...order, status: "Cancelled" } : order,
+        ),
+      );
+    } catch (error) {
+      alert("Failed to cancel order");
+    }
+  };
 
   return (
-    <div class="container mx-auto p-4">
-      <h1 class="text-4xl font-bold text-center my-8">Order History</h1>
-      {orders.length === 0 ? (
-        <p class="text-center text-xl">You have no past orders.</p>
-      ) : (
-        orders.map((order) => <OrderItem key={order._id} order={order} />)
+    <div className=" mx-auto px-4 bg-gray-100 dark:bg-gray-900 min-h-screen py-10">
+      <h1 className="text-4xl font-bold mb-10 text-center text-gray-800 dark:text-white">
+        My Orders
+      </h1>
+
+      {orders.length === 0 && (
+        <p className="text-center text-gray-500 dark:text-gray-400">
+          You have not placed any orders yet
+        </p>
       )}
+
+      {orders.map((order) => {
+        const statusColor =
+          order.status === "Cancelled"
+            ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300"
+            : order.status === "Delivered"
+              ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
+              : "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300";
+
+        return (
+          <div
+            key={order._id}
+            className="
+bg-white
+dark:bg-gray-800
+border
+dark:border-gray-700
+rounded-xl
+shadow-md
+hover:shadow-xl
+transition
+p-6
+mb-8
+max-w-5xl
+mx-auto
+"
+          >
+            {/* ORDER HEADER */}
+
+            <div className="flex justify-between items-center mb-5">
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Order ID
+                </p>
+
+                <p className="font-semibold text-gray-800 dark:text-white">
+                  {order._id}
+                </p>
+              </div>
+
+              <span className={`px-3 py-1 text-sm rounded-full ${statusColor}`}>
+                {order.status}
+              </span>
+            </div>
+
+            {/* ORDER ITEMS */}
+
+            <div className="border-t dark:border-gray-700 pt-4">
+              {order.items.map((item) => (
+                <div
+                  key={item.product}
+                  className="
+flex
+justify-between
+items-center
+py-3
+border-b
+dark:border-gray-700
+"
+                >
+                  <p className="text-gray-700 dark:text-gray-300">
+                    {item.name}
+                  </p>
+
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Qty: {item.qty}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* ORDER FOOTER */}
+
+            <div className="flex justify-between items-center mt-5">
+              <p className="text-lg font-bold text-gray-800 dark:text-white">
+                Total: ${order.totalPrice}
+              </p>
+
+              {/* CANCEL BUTTON */}
+
+              {order.status === "Pending" ? (
+                <button
+                  onClick={() => cancelOrder(order._id)}
+                  className="
+bg-red-500
+hover:bg-red-600
+text-white
+px-4
+py-2
+rounded-lg
+transition
+"
+                >
+                  Cancel Order
+                </button>
+              ) : order.status === "Cancelled" ? (
+                <span className="text-red-500 font-medium">
+                  Order Cancelled
+                </span>
+              ) : (
+                <span className="text-green-500 font-medium">Delivered</span>
+              )}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

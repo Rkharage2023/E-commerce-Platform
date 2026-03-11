@@ -1,3 +1,4 @@
+import defaultImage from "../assets/default-product.png";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -37,25 +38,20 @@ function ProductDetail() {
 
   const handleAddToCart = () => {
     if (product) {
-      // Check if item already exists to potentially update quantity instead of adding new
-      const existingItem = cartItems.find(
-        (item) => item.product._id === product._id,
-      );
-      if (existingItem) {
-        // Optionally dispatch updateQuantity or just inform user
-        alert(
-          `${product.name} is already in your cart. You can adjust quantity in the cart page.`,
-        );
-      } else {
-        dispatch(addItem(product));
-        alert(`${product.name} added to cart!`);
-      }
+      dispatch(addItem(product));
+
+      alert(`${product.name} added to cart`);
+
+      navigate("/cart");
     }
   };
 
-  if (loading) return <div class="text-center py-10">Loading product...</div>;
-  if (error) return <div class="text-center py-10 text-red-500">{error}</div>;
-  if (!product) return <div class="text-center py-10">Product not found.</div>;
+  if (loading)
+    return <div className="text-center py-10">Loading product...</div>;
+  if (error)
+    return <div className="text-center py-10 text-red-500">{error}</div>;
+  if (!product)
+    return <div className="text-center py-10">Product not found.</div>;
 
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen py-16">
@@ -67,9 +63,9 @@ function ProductDetail() {
           {/* Product Image */}
 
           <img
-            src={product.imageUrl || "https://via.placeholder.com/500x400"}
+            src={defaultImage}
             alt={product.name}
-            className="w-full md:w-1/2 h-auto object-cover rounded-lg shadow-md"
+            className="w-52 md:w-1/2 h-auto object-cover rounded-lg shadow-md"
           />
 
           {/* Product Details */}

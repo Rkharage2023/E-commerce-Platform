@@ -3,7 +3,7 @@ export const mockOrders = [
     _id: "ord_1001",
     orderDate: "2023-10-26T10:00:00Z",
     totalAmount: 150.75,
-    status: "Delivered",
+    status: "pending",
     items: [
       {
         productId: "prod_abc",

@@ -15,7 +15,12 @@ import ProductDetailPage from "./components/ProductDetail";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import CartPage from "./pages/CartPage";
-import OrderHistoryPage from "./pages/OrderHistoryPage"; // Import Order History Page
+import CheckoutPage from "./pages/CheckoutPage";
+import OrderHistoryPage from "./pages/OrderHistoryPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminOrders from "./pages/AdminOrders";
+import AdminLayout from "./admin/AdminLayout";
+import AdminProducts from "./pages/AdminProducts";
 
 // Import Auth Selector
 import { selectIsAuthenticated } from "./store/authSlice";
@@ -39,10 +44,15 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
+          <Route path="/admin" element={<AdminLayout />}></Route>
+          <Route path="products" element={<AdminProducts />} />
 
           {/* Protected Route for Order History */}
           <Route
-            path="/order-history"
+            path="/orders"
             element={<ProtectedRoute element={<OrderHistoryPage />} />}
           />
           {/* Add more routes */}
