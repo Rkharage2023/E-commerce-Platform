@@ -76,41 +76,22 @@ router.post("/", protect, admin, async (req, res) => {
 // --- @route  PUT /api/products/:id ---
 // --- @access Private/Admin ---
 router.put("/:id", protect, admin, async (req, res) => {
-  const { name, description, price, countInStock, imageUrl, category, brand } =
-    req.body;
+  const product = await Product.findById(req.params.id);
 
-  // Validation
-  if (!name || !price || !category || !brand) {
-    return res.status(400).json({
-      message:
-        "Please provide all required fields (name, price, category, brand)",
-    });
-  }
+  if (product) {
+    product.name = req.body.name;
+    product.description = req.body.description;
+    product.price = req.body.price;
+    product.countInStock = req.body.countInStock;
+    product.category = req.body.category;
+    product.brand = req.body.brand;
+    product.imageUrl = req.body.imageUrl;
 
-  try {
-    const product = await Product.findById(req.params.id);
+    const updatedProduct = await product.save();
 
-    if (product) {
-      product.name = name || product.name;
-      product.description = description || product.description;
-      product.price = price !== undefined ? price : product.price; // Allow price to be 0
-      product.countInStock =
-        countInStock !== undefined ? countInStock : product.countInStock; // Allow countInStock to be 0
-      product.imageUrl = imageUrl || product.imageUrl;
-      product.category = category || product.category;
-      product.brand = brand || product.brand;
-
-      const updatedProduct = await product.save();
-      res.json(updatedProduct);
-    } else {
-      res.status(404).json({ message: "Product not found" });
-    }
-  } catch (error) {
-    console.error("Update Product Error:", error);
-    if (error.kind === "ObjectId") {
-      return res.status(400).json({ message: "Invalid Product ID format" });
-    }
-    res.status(400).json({ message: "Error updating product" });
+    res.json(updatedProduct);
+  } else {
+    res.status(404).json({ message: "Product not found" });
   }
 });
 
@@ -121,18 +102,16 @@ router.delete("/:id", protect, admin, async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
 
-    if (product) {
-      await product.remove(); // Mongoose v5.x, use deleteOne({ _id: req.params.id }) for v6+
-      res.json({ message: "Product removed" });
-    } else {
-      res.status(404).json({ message: "Product not found" });
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
     }
+
+    await Product.deleteOne({ _id: req.params.id });
+
+    res.json({ message: "Product deleted successfully" });
   } catch (error) {
     console.error("Delete Product Error:", error);
-    if (error.kind === "ObjectId") {
-      return res.status(400).json({ message: "Invalid Product ID format" });
-    }
-    res.status(500).json({ message: "Server Error deleting product" });
+    res.status(500).json({ message: "Server error deleting product" });
   }
 });
 

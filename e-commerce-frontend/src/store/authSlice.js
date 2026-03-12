@@ -2,8 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   token: localStorage.getItem("jwtToken") || null,
-  user: null, // User details fetched after login
-  isAuthenticated: !!localStorage.getItem("jwtToken"),
+  user: JSON.parse(localStorage.getItem("userInfo")) || null
 };
 
 const authSlice = createSlice({
@@ -13,17 +12,19 @@ const authSlice = createSlice({
     setCredentials: (state, action) => {
       state.token = action.payload.token;
       state.user = action.payload.user;
-      state.isAuthenticated = true;
-      // Token is already stored in localStorage in LoginForm
+
+      localStorage.setItem("jwtToken", action.payload.token);
+      localStorage.setItem("userInfo", JSON.stringify(action.payload.user));
     },
+
     logout: (state) => {
       state.token = null;
       state.user = null;
-      state.isAuthenticated = false;
+
       localStorage.removeItem("jwtToken");
-      // Optionally clear other state slices if needed
-    },
-  },
+      localStorage.removeItem("userInfo");
+    }
+  }
 });
 
 export const { setCredentials, logout } = authSlice.actions;

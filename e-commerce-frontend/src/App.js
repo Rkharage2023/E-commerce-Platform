@@ -48,8 +48,7 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/orders" element={<AdminOrders />} />
           <Route path="/admin" element={<AdminLayout />}></Route>
-          <Route path="products" element={<AdminProducts />} />
-
+          <Route path="/admin/products" element={<AdminProducts />} />
           {/* Protected Route for Order History */}
           <Route
             path="/orders"

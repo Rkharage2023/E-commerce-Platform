@@ -24,26 +24,40 @@ router.post("/", protect, async (req, res) => {
 });
 
 // GET USER ORDERS
+// GET USER ORDERS
 router.get("/myorders", protect, async (req, res) => {
-  const orders = await Order.find({
-    user: req.user._id,
-  });
+  const orders = await Order.find({ user: req.user._id }).populate(
+    "items.product",
+    "name price imageUrl",
+  );
 
   res.json(orders);
 });
 
-router.put("/:id/deliver", protect, admin, async (req, res) => {
+// UPDATE ORDER STATUS
+// CANCEL ORDER (USER)
+router.put("/:id/cancel", protect, async (req, res) => {
   const order = await Order.findById(req.params.id);
 
   if (!order) {
     return res.status(404).json({ message: "Order not found" });
   }
 
-  order.status = "Delivered";
+  // Only owner can cancel
+  if (order.user.toString() !== req.user._id.toString()) {
+    return res.status(401).json({ message: "Not authorized" });
+  }
+
+  // Only pending orders can be cancelled
+  if (order.status !== "Pending") {
+    return res.status(400).json({ message: "Order cannot be cancelled" });
+  }
+
+  order.status = "Cancelled";
 
   await order.save();
 
-  res.json(order);
+  res.json({ message: "Order cancelled successfully" });
 });
 
 module.exports = router;

@@ -8,6 +8,7 @@ import { FaUserShield } from "react-icons/fa";
 function Navbar() {
   const dispatch = useDispatch();
   const { token, user } = useSelector((state) => state.auth);
+  console.log(user);
 
   const [darkMode, setDarkMode] = useState(false);
 
@@ -114,14 +115,15 @@ function Navbar() {
             {darkMode ? "☀ Light" : "🌙 Dark"}
           </button>
 
-          {/* ADMIN DASHBOARD ICON */}
-
-          <Link
-            to="/admin"
-            className="bg-purple-600 text-white px-3 py-1 rounded-lg hover:bg-purple-700"
-          >
-            Admin
-          </Link>
+          {user?.role === "admin" && (
+            <Link
+              to="/admin"
+              className="text-xl text-gray-700 dark:text-white hover:text-blue-500"
+              title="Admin Dashboard"
+            >
+              <FaUserShield />
+            </Link>
+          )}
         </div>
       </div>
     </nav>

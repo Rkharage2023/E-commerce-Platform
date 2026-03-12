@@ -16,16 +16,25 @@ function LoginPage() {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        {
+          email,
+          password,
+        },
+      );
 
-      const { token } = res.data;
-
-      localStorage.setItem("jwtToken", token);
-
-      dispatch(setCredentials(res.data));
+      dispatch(
+        setCredentials({
+          token: response.data.token,
+          user: {
+            _id: response.data._id,
+            name: response.data.name,
+            email: response.data.email,
+            role: response.data.role,
+          },
+        }),
+      );
 
       navigate("/");
     } catch (err) {
