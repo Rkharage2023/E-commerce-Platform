@@ -77,6 +77,12 @@ function RegisterPage() {
             Register
           </button>
         </form>
+        <a
+          href="http://localhost:5000/api/auth/google"
+          className="w-full block text-center bg-red-500 text-white py-2 rounded mt-4"
+        >
+          Register with Google
+        </a>
 
         <p className="text-center mt-4 text-sm">
           Already have an account?

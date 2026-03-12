@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
@@ -83,5 +84,44 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server Error during login" });
   }
 });
+
+router.post("/set-password/:token", async (req, res) => {
+  const user = await User.findOne({
+    inviteToken: req.params.token,
+    inviteTokenExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).json({ message: "Invalid or expired token" });
+  }
+
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+  user.password = hashedPassword;
+  user.isVerified = true;
+  user.inviteToken = undefined;
+
+  await user.save();
+
+  res.json({ message: "Password set successfully" });
+});
+
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] }),
+);
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: "/login",
+  }),
+  (req, res) => {
+    const token = generateToken(req.user._id);
+
+    res.redirect(`http://localhost:3000/google-success?token=${token}`);
+  },
+);
 
 module.exports = router;
