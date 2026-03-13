@@ -1,59 +1,62 @@
 const express = require("express");
 const router = express.Router();
+
 const Product = require("../models/Product");
-const { protect } = require("../middleware/authMiddleware"); // We'll create this middleware next
+const { protect } = require("../middleware/authMiddleware");
 const admin = require("../middleware/adminMiddleware");
 
-// --- @desc   Fetch all products ---
-// --- @route  GET /api/products ---
-// --- @access Public ---
+// ==========================
+// GET ALL PRODUCTS
+// ==========================
+
 router.get("/", async (req, res) => {
   try {
-    const products = await Product.find({}); // Find all products
+    const products = await Product.find({});
+
     res.json(products);
   } catch (error) {
-    console.error("Get Products Error:", error);
-    res.status(500).json({ message: "Server Error fetching products" });
+    console.error(error);
+
+    res.status(500).json({ message: "Server error fetching products" });
   }
 });
 
-// --- @desc   Fetch single product by ID ---
-// --- @route  GET /api/products/:id ---
-// --- @access Public ---
+// ==========================
+// GET PRODUCT BY ID
+// ==========================
+
 router.get("/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-    if (product) {
-      res.json(product);
-    } else {
-      res.status(404).json({ message: "Product not found" });
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
     }
+
+    res.json(product);
   } catch (error) {
-    console.error("Get Product by ID Error:", error);
-    // Handle invalid ObjectId format
-    if (error.kind === "ObjectId") {
-      return res.status(400).json({ message: "Invalid Product ID format" });
-    }
-    res.status(500).json({ message: "Server Error fetching product" });
+    console.error(error);
+
+    res.status(500).json({ message: "Server error fetching product" });
   }
 });
 
-// --- @desc   Create a product ---
-// --- @route  POST /api/products ---
-// --- @access Private/Admin ---
+// ==========================
+// CREATE PRODUCT (ADMIN)
+// ==========================
+
 router.post("/", protect, admin, async (req, res) => {
-  const { name, description, price, countInStock, imageUrl, category, brand } =
-    req.body;
-
-  // Validation
-  if (!name || !price || !category || !brand) {
-    return res.status(400).json({
-      message:
-        "Please provide all required fields (name, price, category, brand)",
-    });
-  }
-
   try {
+    const {
+      name,
+      description,
+      price,
+      countInStock,
+      imageUrl,
+      category,
+      brand,
+    } = req.body;
+
     const product = new Product({
       name,
       description,
@@ -65,20 +68,27 @@ router.post("/", protect, admin, async (req, res) => {
     });
 
     const createdProduct = await product.save();
+
     res.status(201).json(createdProduct);
   } catch (error) {
-    console.error("Create Product Error:", error);
-    res.status(400).json({ message: "Error creating product" });
+    console.error(error);
+
+    res.status(500).json({ message: "Product creation failed" });
   }
 });
 
-// --- @desc   Update a product ---
-// --- @route  PUT /api/products/:id ---
-// --- @access Private/Admin ---
-router.put("/:id", protect, admin, async (req, res) => {
-  const product = await Product.findById(req.params.id);
+// ==========================
+// UPDATE PRODUCT
+// ==========================
 
-  if (product) {
+router.put("/:id", protect, admin, async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
     product.name = req.body.name;
     product.description = req.body.description;
     product.price = req.body.price;
@@ -90,14 +100,17 @@ router.put("/:id", protect, admin, async (req, res) => {
     const updatedProduct = await product.save();
 
     res.json(updatedProduct);
-  } else {
-    res.status(404).json({ message: "Product not found" });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({ message: "Product update failed" });
   }
 });
 
-// --- @desc   Delete a product ---
-// --- @route  DELETE /api/products/:id ---
-// --- @access Private/Admin ---
+// ==========================
+// DELETE PRODUCT
+// ==========================
+
 router.delete("/:id", protect, admin, async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -110,8 +123,9 @@ router.delete("/:id", protect, admin, async (req, res) => {
 
     res.json({ message: "Product deleted successfully" });
   } catch (error) {
-    console.error("Delete Product Error:", error);
-    res.status(500).json({ message: "Server error deleting product" });
+    console.error(error);
+
+    res.status(500).json({ message: "Delete product failed" });
   }
 });
 

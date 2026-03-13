@@ -9,14 +9,20 @@ const { protect } = require("../middleware/authMiddleware");
 const admin = require("../middleware/adminMiddleware");
 
 // GET ALL EMPLOYEES
-router.get("/", protect, admin, async (req, res) => {
-  const employees = await User.find({ role: "employee" });
-  res.json(employees);
-});
+// router.get("/", protect, admin, async (req, res) => {
+//   const employees = await User.find({ role: "employee" });
+//   res.json(employees);
+// });
 
 function generateTempPassword() {
   return Math.random().toString(36).slice(-8);
 }
+
+router.get("/", async (req, res) => {
+  const employees = await User.find({ role: "employee" }).select("-password");
+
+  res.json(employees);
+});
 
 // CREATE EMPLOYEE
 router.post("/", protect, admin, async (req, res) => {
@@ -55,35 +61,49 @@ router.delete("/:id", protect, admin, async (req, res) => {
 });
 
 router.post("/invite", async (req, res) => {
-  const { name, email } = req.body;
+  try {
+    const { name, email } = req.body;
 
-  let user = await User.findOne({ email });
+    if (!email) {
+      return res.status(400).json({ message: "Email required" });
+    }
 
-  const token = crypto.randomBytes(32).toString("hex");
+    let user = await User.findOne({ email });
 
-  if (!user) {
-    user = await User.create({
-      name,
+    const token = crypto.randomBytes(32).toString("hex");
+
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        role: "employee",
+        inviteToken: token,
+        inviteTokenExpire: Date.now() + 24 * 60 * 60 * 1000,
+        inviteStatus: "Pending",
+      });
+    } else {
+      user.inviteToken = token;
+      user.inviteTokenExpire = Date.now() + 24 * 60 * 60 * 1000;
+      await user.save();
+    }
+
+    const link = `http://localhost:3000/set-password/${token}`;
+
+    await sendEmail(
       email,
-      role: "employee",
-      inviteToken: token,
-      inviteTokenExpire: Date.now() + 24 * 60 * 60 * 1000,
-    });
-  } else {
-    user.inviteToken = token;
-    user.inviteTokenExpire = Date.now() + 24 * 60 * 60 * 1000;
-    await user.save();
+      "Employee Invitation",
+      `
+<h3>You are invited to the Admin Panel</h3>
+<p>Click the link below to create your password</p>
+<a href="${link}">${link}</a>
+`,
+    );
+
+    res.json({ message: "Invite sent successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to send invite email" });
   }
-
-  const link = `http://localhost:3000/set-password/${token}`;
-
-  await sendEmail(
-    email,
-    "Employee Invitation",
-    `Click here to create password: <a href="${link}">${link}</a>`,
-  );
-
-  res.json({ message: "Invitation email sent" });
 });
 
 module.exports = router;

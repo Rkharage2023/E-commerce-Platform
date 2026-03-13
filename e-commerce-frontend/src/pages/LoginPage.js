@@ -81,11 +81,22 @@ function LoginPage() {
             Login
           </button>
         </form>
+        <div className="flex items-center my-4">
+          <hr className="flex-grow border-gray-300" />
+          <span className="mx-3 text-gray-500 text-sm">OR</span>
+          <hr className="flex-grow border-gray-300" />
+        </div>
         <a
           href="http://localhost:5000/api/auth/google"
-          className="w-full block text-center bg-red-500 text-white py-2 rounded mt-4"
+          className="flex items-center justify-center gap-3 w-full border border-gray-300 bg-white text-gray-700 py-2 rounded-lg shadow-sm hover:bg-gray-100 transition"
         >
-          Login with Google
+          <img
+            src="https://www.svgrepo.com/show/475656/google-color.svg"
+            alt="Google"
+            className="w-5 h-5"
+          />
+
+          <span className="font-medium">Continue with Google</span>
         </a>
 
         <p className="text-center mt-4 text-sm">

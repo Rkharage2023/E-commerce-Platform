@@ -10,6 +10,8 @@ function AdminEmployees() {
   const token = localStorage.getItem("jwtToken");
 
   const fetchEmployees = async () => {
+    const token = localStorage.getItem("jwtToken");
+
     const res = await axios.get("http://localhost:5000/api/admin/employees", {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -17,6 +19,22 @@ function AdminEmployees() {
     });
 
     setEmployees(res.data);
+  };
+
+  const inviteEmployee = async () => {
+    await axios.post(
+      "http://localhost:5000/api/admin/employees/invite",
+      { name, email },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    alert("Invite sent");
+
+    fetchEmployees();
   };
 
   useEffect(() => {
@@ -53,20 +71,26 @@ function AdminEmployees() {
     fetchEmployees();
   };
 
-  const sendInvite = async () => {
-    await axios.post(
-      "http://localhost:5000/api/admin/employees/invite",
-      { name, email },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+  const sendInvite = async (name, email) => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+
+      await axios.post(
+        "http://localhost:5000/api/admin/employees/invite",
+        { name, email },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      },
-    );
+      );
 
-    alert("Invitation email sent");
+      alert("Invitation email sent");
+    } catch (error) {
+      console.log(error.response.data);
+      alert("Failed to send invite");
+    }
   };
-
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8">
       <h1 className="text-3xl font-bold mb-8 dark:text-white">
@@ -128,7 +152,17 @@ function AdminEmployees() {
                 <td className="p-3 dark:text-white">{emp.name}</td>
 
                 <td className="p-3 dark:text-white">{emp.email}</td>
-
+                <td>
+                  <span
+                    className={
+                      emp.inviteStatus === "Active"
+                        ? "text-green-600"
+                        : "text-yellow-600"
+                    }
+                  >
+                    {emp.inviteStatus}
+                  </span>
+                </td>
                 <td className="p-3">
                   <button
                     onClick={() => deleteEmployee(emp._id)}
@@ -137,7 +171,7 @@ function AdminEmployees() {
                     Delete
                   </button>
                   <button
-                    onClick={sendInvite}
+                    onClick={() => sendInvite(emp.name, emp.email)}
                     className="bg-blue-500 text-white px-3 py-1 rounded"
                   >
                     Send Invite

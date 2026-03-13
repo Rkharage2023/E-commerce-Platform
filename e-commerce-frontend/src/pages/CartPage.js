@@ -28,6 +28,8 @@ function CartPage() {
   };
 
   const decreaseQty = (item) => {
+    if (item.quantity <= 1) return;
+
     dispatch(
       updateQuantity({
         productId: item.product._id,
@@ -51,7 +53,7 @@ function CartPage() {
 
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen py-12">
-      <div className="max-w-6xl mx-auto px-6 ">
+      <div className="max-w-6xl mx-auto px-6">
         <h1 className="text-4xl font-bold mb-10 text-gray-800 dark:text-white">
           Your Cart
         </h1>
@@ -65,15 +67,11 @@ function CartPage() {
               border border-gray-200 dark:border-gray-700
               rounded-xl shadow-md p-6 gap-6"
             >
-              {/* Product Image */}
-
               <img
                 src={defaultImage}
                 alt={item.product.name}
                 className="w-32 h-32 object-cover rounded-lg"
               />
-
-              {/* Product Info */}
 
               <div className="flex-1">
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
@@ -84,8 +82,6 @@ function CartPage() {
                   ${item.product.price}
                 </p>
               </div>
-
-              {/* Quantity Controls */}
 
               <div className="flex items-center gap-3">
                 <button
@@ -107,8 +103,6 @@ function CartPage() {
                 </button>
               </div>
 
-              {/* Remove Button */}
-
               <button
                 onClick={() => handleRemove(item.product._id)}
                 className="text-red-500 hover:text-red-700"
@@ -119,25 +113,26 @@ function CartPage() {
           ))}
         </div>
 
-        {/* Total Section */}
-
         <div className="mt-10 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
             Total: ${totalPrice.toFixed(2)}
           </h2>
 
-          <button
-            onClick={() => navigate("/checkout")}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg"
-          >
-            Proceed to Checkout
-          </button>
-          <button
-            onClick={() => dispatch(clearCart())}
-            className="bg-red-500 text-white px-4 py-2 rounded ml-4"
-          >
-            Clear Cart
-          </button>
+          <div className="mt-6 flex gap-4">
+            <button
+              onClick={() => navigate("/checkout")}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+            >
+              Proceed to Checkout
+            </button>
+
+            <button
+              onClick={() => dispatch(clearCart())}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+            >
+              Clear Cart
+            </button>
+          </div>
         </div>
       </div>
     </div>

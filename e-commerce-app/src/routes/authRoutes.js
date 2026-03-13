@@ -92,13 +92,13 @@ router.post("/set-password/:token", async (req, res) => {
   });
 
   if (!user) {
-    return res.status(400).json({ message: "Invalid or expired token" });
+    return res.status(400).json({ message: "Invalid token" });
   }
 
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
   user.password = hashedPassword;
-  user.isVerified = true;
+  user.inviteStatus = "Active";
   user.inviteToken = undefined;
 
   await user.save();

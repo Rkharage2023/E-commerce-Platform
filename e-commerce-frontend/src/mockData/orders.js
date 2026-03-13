@@ -23,7 +23,7 @@ export const mockOrders = [
     _id: "ord_1002",
     orderDate: "2023-09-15T14:30:00Z",
     totalAmount: 75.0,
-    status: "Shipped",
+    status: "pending",
     items: [
       { productId: "prod_ghi", name: "USB-C Hub", quantity: 2, price: 37.5 },
     ],
@@ -32,7 +32,7 @@ export const mockOrders = [
     _id: "ord_1003",
     orderDate: "2023-08-01T09:00:00Z",
     totalAmount: 210.0,
-    status: "Delivered",
+    status: "pending",
     items: [
       {
         productId: "prod_jkl",

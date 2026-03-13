@@ -24,6 +24,8 @@ import AdminProducts from "./pages/AdminProducts";
 import AdminEmployees from "./pages/AdminEmployees";
 import GoogleSuccess from "./pages/GoogleSuccess";
 import SetPasswordPage from "./pages/SetPasswordPage";
+import PaymentPage from "./pages/PaymentPage";
+import MyProducts from "./pages/MyProducts";
 
 // Import Auth Selector
 import { selectIsAuthenticated } from "./store/authSlice";
@@ -55,6 +57,9 @@ function App() {
           <Route path="/admin/employees" element={<AdminEmployees />} />
           <Route path="/google-success" element={<GoogleSuccess />} />
           <Route path="/set-password/:token" element={<SetPasswordPage />} />
+          <Route path="/payment" element={<PaymentPage />} />
+
+          <Route path="/my-products" element={<MyProducts />} />
           {/* Protected Route for Order History */}
           <Route
             path="/orders"

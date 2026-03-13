@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function SetPasswordPage() {
   const { token } = useParams();
@@ -22,7 +22,7 @@ function SetPasswordPage() {
 
   return (
     <div className="flex justify-center items-center min-h-screen">
-      <form onSubmit={submit} className="bg-white p-8 shadow rounded">
+      <form onSubmit={submit} className="bg-white p-8 rounded shadow">
         <h2 className="text-xl mb-4">Create Password</h2>
 
         <input
