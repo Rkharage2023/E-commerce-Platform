@@ -80,14 +80,12 @@ router.put("/:id/status", protect, admin, async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    order.orderStatus = req.body.status;
+    order.status = req.body.status;
 
     const updatedOrder = await order.save();
 
     res.json(updatedOrder);
   } catch (error) {
-    console.error(error);
-
     res.status(500).json({ message: "Status update failed" });
   }
 });
@@ -103,25 +101,57 @@ router.put("/:id/cancel", protect, async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Ensure order belongs to user
-    if (order.user.toString() !== req.user._id.toString()) {
+    // Allow owner OR admin
+    if (
+      order.user.toString() !== req.user._id.toString() &&
+      req.user.role !== "admin"
+    ) {
       return res.status(401).json({ message: "Not authorized" });
     }
 
-    if (order.orderStatus !== "Pending") {
-      return res.status(400).json({ message: "Order cannot be cancelled" });
-    }
-
-    order.orderStatus = "Cancelled";
+    order.status = "Cancelled";
 
     await order.save();
 
     res.json({ message: "Order cancelled successfully" });
   } catch (error) {
-    console.error(error);
-
+    console.log(error);
     res.status(500).json({ message: "Cancel order failed" });
   }
+});
+
+router.put("/:id/assign", protect, admin, async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  order.assignedEmployee = req.body.employeeId;
+  order.orderStatus = "Assigned";
+
+  await order.save();
+
+  res.json(order);
+});
+
+router.get("/employee/orders", protect, async (req, res) => {
+  const orders = await Order.find({
+    assignedEmployee: req.user._id,
+    orderStatus: "Assigned",
+  }).populate("items.product", "name price");
+
+  res.json(orders);
+});
+
+router.put("/employee/orders/:id/deliver", protect, async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order.assignedEmployee.toString() !== req.user._id.toString()) {
+    return res.status(401).json({ message: "Not authorized" });
+  }
+
+  order.orderStatus = "Delivered";
+
+  await order.save();
+
+  res.json({ message: "Order delivered" });
 });
 
 module.exports = router;

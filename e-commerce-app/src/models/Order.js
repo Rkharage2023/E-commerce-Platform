@@ -7,6 +7,11 @@ const orderSchema = new mongoose.Schema(
       ref: "User",
     },
 
+    assignedEmployee: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
     items: [
       {
         product: {
@@ -19,18 +24,16 @@ const orderSchema = new mongoose.Schema(
       },
     ],
 
-    totalPrice: {
-      type: Number,
-      required: true,
-    },
+    totalPrice: Number,
 
     paymentStatus: {
       type: String,
       default: "Paid",
     },
 
-    orderStatus: {
+    status: {
       type: String,
+      enum: ["Pending", "Shipped", "Delivered", "Cancelled"],
       default: "Pending",
     },
   },

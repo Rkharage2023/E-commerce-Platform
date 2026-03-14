@@ -7,10 +7,21 @@ import { FaUserShield } from "react-icons/fa";
 
 function Navbar() {
   const dispatch = useDispatch();
-  const { token, user } = useSelector((state) => state.auth);
-  console.log(user);
+
+  const { token: reduxToken, user: reduxUser } = useSelector(
+    (state) => state.auth,
+  );
+
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const storedToken = localStorage.getItem("jwtToken");
+
+  const user = reduxUser || storedUser;
+  const token = reduxToken || storedToken;
+  const cartItems = useSelector(selectCartItems);
 
   const [darkMode, setDarkMode] = useState(false);
+
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   useEffect(() => {
     if (darkMode) {
@@ -20,19 +31,17 @@ function Navbar() {
     }
   }, [darkMode]);
 
-  const cartItems = useSelector(selectCartItems);
-
-  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("jwtToken");
+    localStorage.removeItem("user");
   };
 
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-md transition duration-300">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo */}
+
         <Link
           to="/"
           className="text-2xl font-bold text-blue-600 dark:text-yellow-400"
@@ -41,6 +50,8 @@ function Navbar() {
         </Link>
 
         <div className="flex items-center gap-6">
+          {/* HOME */}
+
           <Link
             to="/"
             className="text-gray-700 dark:text-gray-200 hover:text-blue-500 transition"
@@ -48,45 +59,63 @@ function Navbar() {
             Home
           </Link>
 
-          <Link
-            to="/products"
-            className="text-gray-700 dark:text-gray-200 hover:text-blue-500 transition"
-          >
-            Products
-          </Link>
+          {/* NORMAL USER NAVBAR */}
 
-          <Link
-            to="/cart"
-            className="text-gray-700 dark:text-gray-200 hover:text-blue-500 transition"
-          >
-            🛒 Cart
-            {cartCount > 0 && (
-              <span className="ml-1 bg-red-500 text-white px-2 py-1 rounded-full text-xs">
-                {cartCount}
-              </span>
-            )}
-          </Link>
-          <Link
-            to="/orders"
-            className="text-gray-700 dark:text-gray-200 hover:text-blue-500 transition"
-          >
-            My Orders
-          </Link>
+          {(!user?.role || user?.role === "user") && (
+            <>
+              <Link
+                to="/products"
+                className="text-gray-700 dark:text-gray-200 hover:text-blue-500"
+              >
+                Products
+              </Link>
 
-          {/* LOGIN / LOGOUT LOGIC */}
+              <Link
+                to="/cart"
+                className="text-gray-700 dark:text-gray-200 hover:text-blue-500"
+              >
+                🛒 Cart
+                {cartCount > 0 && (
+                  <span className="ml-1 bg-red-500 text-white px-2 py-1 rounded-full text-xs">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+
+              <Link
+                to="/orders"
+                className="text-gray-700 dark:text-gray-200 hover:text-blue-500"
+              >
+                My Orders
+              </Link>
+            </>
+          )}
+
+          {/* EMPLOYEE NAVBAR */}
+
+          {user?.role === "employee" && (
+            <Link
+              to="/employee"
+              className="text-gray-700 dark:text-gray-200 hover:text-blue-500"
+            >
+              Dashboard
+            </Link>
+          )}
+
+          {/* LOGIN / LOGOUT */}
 
           {!token ? (
             <>
               <Link
                 to="/login"
-                className="text-gray-700 dark:text-gray-200 hover:text-blue-500 transition"
+                className="text-gray-700 dark:text-gray-200 hover:text-blue-500"
               >
                 Login
               </Link>
 
               <Link
                 to="/register"
-                className="text-gray-700 dark:text-gray-200 hover:text-blue-500 transition"
+                className="text-gray-700 dark:text-gray-200 hover:text-blue-500"
               >
                 Register
               </Link>
@@ -114,6 +143,8 @@ function Navbar() {
           >
             {darkMode ? "☀ Light" : "🌙 Dark"}
           </button>
+
+          {/* ADMIN DASHBOARD ICON */}
 
           {user?.role === "admin" && (
             <Link

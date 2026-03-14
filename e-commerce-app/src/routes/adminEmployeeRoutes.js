@@ -32,10 +32,10 @@ router.post("/", protect, admin, async (req, res) => {
 
   const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
-  const employee = new User({
+  const employee = await User.create({
     name,
     email,
-    password: hashedPassword,
+    hashedPassword,
     role: "employee",
   });
 
@@ -45,6 +45,48 @@ router.post("/", protect, admin, async (req, res) => {
     message: "Employee created",
     tempPassword,
   });
+});
+
+router.put("/:id/pay-salary", protect, admin, async (req, res) => {
+  const employee = await User.findById(req.params.id);
+
+  if (!employee) {
+    return res.status(404).json({ message: "Employee not found" });
+  }
+
+  employee.salary += req.body.amount;
+
+  await employee.save();
+
+  res.json({
+    message: "Salary paid successfully",
+    salary: employee.salary,
+  });
+});
+
+router.put("/:id", protect, admin, async (req, res) => {
+  const employee = await User.findById(req.params.id);
+
+  employee.name = req.body.name;
+  employee.email = req.body.email;
+  employee.salary = req.body.salary;
+
+  await employee.save();
+
+  res.json(employee);
+});
+
+// UPDATE EMPLOYEE
+router.put("/:id", protect, admin, async (req, res) => {
+  const employee = await User.findById(req.params.id);
+
+  employee.name = req.body.name;
+  employee.email = req.body.email;
+  employee.salary = req.body.salary;
+
+  await employee.save();
+
+  res.json(employee);
 });
 
 // DELETE EMPLOYEE

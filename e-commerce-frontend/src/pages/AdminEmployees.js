@@ -9,38 +9,25 @@ function AdminEmployees() {
 
   const token = localStorage.getItem("jwtToken");
 
-  const fetchEmployees = async () => {
-    const token = localStorage.getItem("jwtToken");
-
-    const res = await axios.get("http://localhost:5000/api/admin/employees", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    setEmployees(res.data);
-  };
-
-  const inviteEmployee = async () => {
-    await axios.post(
-      "http://localhost:5000/api/admin/employees/invite",
-      { name, email },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-
-    alert("Invite sent");
-
-    fetchEmployees();
-  };
-
   useEffect(() => {
     fetchEmployees();
   }, []);
 
+  const fetchEmployees = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/admin/employees", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setEmployees(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ADD EMPLOYEE
   const addEmployee = async (e) => {
     e.preventDefault();
 
@@ -55,26 +42,38 @@ function AdminEmployees() {
         },
       );
 
+      alert("Employee added");
+
+      setName("");
+      setEmail("");
+      setPassword("");
+
       fetchEmployees();
     } catch (error) {
-      console.log(error.response.data);
+      console.log(error.response?.data);
     }
   };
 
+  // DELETE EMPLOYEE
   const deleteEmployee = async (id) => {
-    await axios.delete(`http://localhost:5000/api/admin/employees/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    if (!window.confirm("Delete this employee?")) return;
 
-    fetchEmployees();
+    try {
+      await axios.delete(`http://localhost:5000/api/admin/employees/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      fetchEmployees();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
+  // SEND INVITE EMAIL
   const sendInvite = async (name, email) => {
     try {
-      const token = localStorage.getItem("jwtToken");
-
       await axios.post(
         "http://localhost:5000/api/admin/employees/invite",
         { name, email },
@@ -87,10 +86,36 @@ function AdminEmployees() {
 
       alert("Invitation email sent");
     } catch (error) {
-      console.log(error.response.data);
+      console.log(error.response?.data);
       alert("Failed to send invite");
     }
   };
+
+  // PAY SALARY
+  const paySalary = async (id) => {
+    const amount = prompt("Enter salary amount");
+
+    if (!amount) return;
+
+    try {
+      await axios.put(
+        `http://localhost:5000/api/admin/employees/${id}/pay-salary`,
+        { amount },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      alert("Salary paid");
+
+      fetchEmployees();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8">
       <h1 className="text-3xl font-bold mb-8 dark:text-white">
@@ -110,6 +135,7 @@ function AdminEmployees() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="p-2 border rounded"
+            required
           />
 
           <input
@@ -118,6 +144,7 @@ function AdminEmployees() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="p-2 border rounded"
+            required
           />
 
           <input
@@ -126,10 +153,11 @@ function AdminEmployees() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="p-2 border rounded"
+            required
           />
         </div>
 
-        <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+        <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
           Add Employee
         </button>
       </form>
@@ -142,7 +170,9 @@ function AdminEmployees() {
             <tr>
               <th className="p-3">Name</th>
               <th className="p-3">Email</th>
-              <th className="p-3">Action</th>
+              <th className="p-3">Invite Status</th>
+              <th className="p-3">Salary</th>
+              <th className="p-3">Actions</th>
             </tr>
           </thead>
 
@@ -152,7 +182,10 @@ function AdminEmployees() {
                 <td className="p-3 dark:text-white">{emp.name}</td>
 
                 <td className="p-3 dark:text-white">{emp.email}</td>
-                <td>
+
+                {/* Invite Status */}
+
+                <td className="p-3">
                   <span
                     className={
                       emp.inviteStatus === "Active"
@@ -163,18 +196,33 @@ function AdminEmployees() {
                     {emp.inviteStatus}
                   </span>
                 </td>
-                <td className="p-3">
-                  <button
-                    onClick={() => deleteEmployee(emp._id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded"
-                  >
-                    Delete
-                  </button>
+
+                {/* Salary */}
+
+                <td className="p-3 dark:text-white">${emp.salary || 0}</td>
+
+                {/* ACTION BUTTONS */}
+
+                <td className="p-3 space-x-2">
                   <button
                     onClick={() => sendInvite(emp.name, emp.email)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded"
+                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
                   >
-                    Send Invite
+                    Invite
+                  </button>
+
+                  <button
+                    onClick={() => paySalary(emp._id)}
+                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+                  >
+                    Pay Salary
+                  </button>
+
+                  <button
+                    onClick={() => deleteEmployee(emp._id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>

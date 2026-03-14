@@ -35,8 +35,24 @@ function LoginPage() {
           },
         }),
       );
+      localStorage.setItem("jwtToken", response.data.token);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          _id: response.data._id,
+          name: response.data.name,
+          email: response.data.email,
+          role: response.data.role,
+        }),
+      );
 
-      navigate("/");
+      if (response.data.role === "employee") {
+        navigate("/employee");
+      } else if (response.data.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }

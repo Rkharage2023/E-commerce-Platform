@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    salary: {
+      type: Number,
+      default: 0,
+    },
 
     inviteToken: String,
 
