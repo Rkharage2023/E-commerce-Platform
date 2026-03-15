@@ -11,6 +11,7 @@ function AdminOrders() {
   useEffect(() => {
     fetchOrders();
     fetchEmployees();
+    
   }, []);
 
   const assignOrder = async (orderId, employeeId) => {

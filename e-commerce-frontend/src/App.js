@@ -69,7 +69,6 @@ function ReloadOnRouteChange() {
 // ============================
 
 function App() {
-  const user = JSON.parse(localStorage.getItem("user"));
 
   return (
     <Router>

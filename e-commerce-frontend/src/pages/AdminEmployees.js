@@ -11,6 +11,7 @@ function AdminEmployees() {
 
   useEffect(() => {
     fetchEmployees();
+    
   }, []);
 
   const fetchEmployees = async () => {

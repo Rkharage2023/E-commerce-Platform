@@ -8,6 +8,7 @@ function EmployeeDashboard() {
 
   useEffect(() => {
     fetchOrders();
+    // eslint-disable-next-line
   }, []);
 
   const fetchOrders = async () => {

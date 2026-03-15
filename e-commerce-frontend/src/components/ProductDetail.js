@@ -12,7 +12,6 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  const cartItems = useSelector(selectCartItems);
   const navigate = useNavigate();
 
   useEffect(() => {
