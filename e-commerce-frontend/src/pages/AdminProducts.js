@@ -22,7 +22,9 @@ function AdminProducts() {
   }, []);
 
   const fetchProducts = async () => {
-    const res = await axios.get("http://localhost:5000/api/products");
+    const res = await axios.get(
+      "https://e-commerce-platform-yogr.onrender.com/api/products",
+    );
 
     setProducts(res.data);
   };
@@ -31,7 +33,7 @@ function AdminProducts() {
   const saveProduct = async () => {
     if (editingId) {
       await axios.put(
-        `http://localhost:5000/api/products/${editingId}`,
+        `https://e-commerce-platform-yogr.onrender.com/api/products/${editingId}`,
         {
           name,
           description,
@@ -49,7 +51,7 @@ function AdminProducts() {
       setEditingId(null);
     } else {
       await axios.post(
-        "http://localhost:5000/api/products",
+        "https://e-commerce-platform-yogr.onrender.com/api/products",
         {
           name,
           description,
@@ -73,9 +75,12 @@ function AdminProducts() {
   // DELETE PRODUCT
   const deleteProduct = async (id) => {
     if (window.confirm("Delete this product?")) {
-      await axios.delete(`http://localhost:5000/api/products/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://e-commerce-platform-yogr.onrender.com/api/products/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       fetchProducts();
     }

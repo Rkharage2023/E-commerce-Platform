@@ -60,7 +60,7 @@ app.use("/api/admin/employees", adminEmployeeRoutes);
 
 /* ROOT TEST */
 app.get("/", (req, res) => {
-  res.send("E-commerce Backend API Running");
+  res.send("E-commerce Backend API Running ");
 });
 
 app.listen(PORT, () => {
