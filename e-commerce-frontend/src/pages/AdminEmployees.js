@@ -11,16 +11,18 @@ function AdminEmployees() {
 
   useEffect(() => {
     fetchEmployees();
-    
   }, []);
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/admin/employees", {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await axios.get(
+        "https://e-commerce-platform-yogr.onrender.com/api/admin/employees",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       setEmployees(res.data);
     } catch (error) {
@@ -34,7 +36,7 @@ function AdminEmployees() {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/admin/employees",
+        "https://e-commerce-platform-yogr.onrender.com/api/admin/employees",
         { name, email, password },
         {
           headers: {
@@ -60,11 +62,14 @@ function AdminEmployees() {
     if (!window.confirm("Delete this employee?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/admin/employees/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      await axios.delete(
+        `https://e-commerce-platform-yogr.onrender.com/api/admin/employees/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       fetchEmployees();
     } catch (error) {
@@ -76,7 +81,7 @@ function AdminEmployees() {
   const sendInvite = async (name, email) => {
     try {
       await axios.post(
-        "http://localhost:5000/api/admin/employees/invite",
+        "https://e-commerce-platform-yogr.onrender.com/api/admin/employees/invite",
         { name, email },
         {
           headers: {
@@ -100,7 +105,7 @@ function AdminEmployees() {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/admin/employees/${id}/pay-salary`,
+        `https://e-commerce-platform-yogr.onrender.com/api/admin/employees/${id}/pay-salary`,
         { amount },
         {
           headers: {

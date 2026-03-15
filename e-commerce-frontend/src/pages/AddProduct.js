@@ -11,7 +11,7 @@ function AddProduct() {
     const token = localStorage.getItem("jwtToken");
 
     await axios.post(
-      "http://localhost:5000/api/products",
+      "https://e-commerce-platform-yogr.onrender.com/api/products",
       {
         name,
         price,

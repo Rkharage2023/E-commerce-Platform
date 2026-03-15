@@ -13,7 +13,7 @@ function PaymentPage() {
   const handlePayment = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/api/orders",
+        "https://e-commerce-platform-yogr.onrender.com/api/orders",
         {
           items: cartItems,
           totalPrice,

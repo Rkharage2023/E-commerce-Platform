@@ -14,7 +14,7 @@ function EmployeeDashboard() {
   const fetchOrders = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/orders/employee/orders",
+        "https://e-commerce-platform-yogr.onrender.com/api/orders/employee/orders",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -31,7 +31,7 @@ function EmployeeDashboard() {
   const markDelivered = async (id) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/orders/employee/orders/${id}/deliver`,
+        `https://e-commerce-platform-yogr.onrender.com/api/orders/employee/orders/${id}/deliver`,
         {},
         {
           headers: {

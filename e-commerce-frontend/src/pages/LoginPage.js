@@ -17,7 +17,7 @@ function LoginPage() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        "https://e-commerce-platform-yogr.onrender.com/api/auth/login",
         {
           email,
           password,
@@ -103,7 +103,7 @@ function LoginPage() {
           <hr className="flex-grow border-gray-300" />
         </div>
         <a
-          href="http://localhost:5000/api/auth/google"
+          href="https://e-commerce-platform-yogr.onrender.com/api/auth/google"
           className="flex items-center justify-center gap-3 w-full border border-gray-300 bg-white text-gray-700 py-2 rounded-lg shadow-sm hover:bg-gray-100 transition"
         >
           <img

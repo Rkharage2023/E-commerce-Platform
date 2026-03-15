@@ -20,7 +20,7 @@ function ProductDetail() {
         setLoading(true);
         // Replace with your actual API endpoint
         const response = await axios.get(
-          `http://localhost:5000/api/products/${id}`,
+          `https://e-commerce-platform-yogr.onrender.com/api/products/${id}`,
         );
         setProduct(response.data);
         setError(null);

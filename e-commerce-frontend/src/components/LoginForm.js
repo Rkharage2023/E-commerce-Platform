@@ -16,7 +16,7 @@ function LoginForm() {
     setError("");
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        "https://e-commerce-platform-yogr.onrender.com/api/auth/login",
         {
           email,
           password,

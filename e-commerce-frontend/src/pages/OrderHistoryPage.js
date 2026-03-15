@@ -10,7 +10,7 @@ function OrderHistoryPage() {
         const token = localStorage.getItem("jwtToken");
 
         const res = await axios.get(
-          "http://localhost:5000/api/orders/myorders",
+          "https://e-commerce-platform-yogr.onrender.com/api/orders/myorders",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -32,7 +32,7 @@ function OrderHistoryPage() {
       const token = localStorage.getItem("jwtToken");
 
       await axios.put(
-        `http://localhost:5000/api/orders/${id}/cancel`,
+        `https://e-commerce-platform-yogr.onrender.com/api/orders/${id}/cancel`,
         {},
         {
           headers: {

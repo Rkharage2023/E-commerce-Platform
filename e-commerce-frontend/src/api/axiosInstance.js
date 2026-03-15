@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/api", // Your backend API base URL
+  baseURL: "https://e-commerce-platform-yogr.onrender.com/api", // Your backend API base URL
 });
 
 // Request interceptor to add the token

@@ -8,7 +8,7 @@ function MyProducts() {
     const fetchOrders = async () => {
       const token = localStorage.getItem("jwtToken");
 
-      const res = await axios.get("http://localhost:5000/api/orders/myorders", {
+      const res = await axios.get("https://e-commerce-platform-yogr.onrender.com/api/orders/myorders", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

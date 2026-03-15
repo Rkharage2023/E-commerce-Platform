@@ -11,13 +11,12 @@ function AdminOrders() {
   useEffect(() => {
     fetchOrders();
     fetchEmployees();
-    
   }, []);
 
   const assignOrder = async (orderId, employeeId) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/orders/${orderId}/assign`,
+        `https://e-commerce-platform-yogr.onrender.com/api/orders/${orderId}/assign`,
         { employeeId },
         {
           headers: {
@@ -34,11 +33,14 @@ function AdminOrders() {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/admin/employees", {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await axios.get(
+        "https://e-commerce-platform-yogr.onrender.com/api/admin/employees",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       setEmployees(res.data);
     } catch (error) {
@@ -49,11 +51,14 @@ function AdminOrders() {
   // FETCH ORDERS
   const fetchOrders = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/orders/admin", {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await axios.get(
+        "https://e-commerce-platform-yogr.onrender.com/api/orders/admin",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       setOrders(res.data);
       setLoading(false);
@@ -67,7 +72,7 @@ function AdminOrders() {
   const updateStatus = async (id, status) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/orders/${id}/status`,
+        `https://e-commerce-platform-yogr.onrender.com/api/orders/${id}/status`,
         { status },
         {
           headers: {
@@ -91,7 +96,7 @@ function AdminOrders() {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/orders/${id}/cancel`,
+        `https://e-commerce-platform-yogr.onrender.com/api/orders/${id}/cancel`,
         {},
         {
           headers: {
