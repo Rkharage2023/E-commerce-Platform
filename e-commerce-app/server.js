@@ -1,22 +1,20 @@
-import dotenv from "dotenv";
-import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import rateLimit from "express-rate-limit";
-import passport from "passport";
+const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const passport = require("passport");
+const dotenv = require("dotenv");
 
-import connectDB from "./src/config/db.js";
+const connectDB = require("./src/config/db");
 
-import authRoutes from "./src/routes/authRoutes.js";
-import productRoutes from "./src/routes/productRoutes.js";
-import cartRoutes from "./src/routes/cartRoutes.js";
-import orderRoutes from "./src/routes/orderRoutes.js";
-import adminEmployeeRoutes from "./src/routes/adminEmployeeRoutes.js";
+const authRoutes = require("./src/routes/authRoutes");
+const productRoutes = require("./src/routes/productRoutes");
+const cartRoutes = require("./src/routes/cartRoutes");
+const orderRoutes = require("./src/routes/orderRoutes");
+const adminEmployeeRoutes = require("./src/routes/adminEmployeeRoutes");
 
-import "./src/config/passport.js";
-// ==========================
-// CONFIG
-// ==========================
+require("./src/config/passport");
+
 dotenv.config();
 
 const app = express();
