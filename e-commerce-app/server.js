@@ -34,19 +34,20 @@ app.use(limiter);
 
 /* CORS */
 const allowedOrigins = [
-  "https://your-frontend-domain.netlify.app",
+  "https://eproductsplatform.netlify.app/",
   "http://localhost:3000",
 ];
 
+/* MIDDLEWARE */
+app.use(express.json());
+
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: ["http://localhost:3000", "https://eproductsplatform.netlify.app"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),
 );
-
-/* MIDDLEWARE */
-app.use(express.json());
 
 /* DATABASE */
 connectDB();
