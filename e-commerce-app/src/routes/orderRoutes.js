@@ -20,7 +20,7 @@ router.post("/", protect, async (req, res) => {
       user: req.user._id,
       items,
       totalPrice,
-      orderStatus: "Pending",
+      status: "Pending",
       paymentStatus: "Paid",
     });
 
@@ -29,13 +29,12 @@ router.post("/", protect, async (req, res) => {
     res.status(201).json(createdOrder);
   } catch (error) {
     console.error(error);
-
     res.status(500).json({ message: "Order creation failed" });
   }
 });
 
 // ==========================
-// GET USER ORDERS (MY ORDERS)
+// GET USER ORDERS
 // ==========================
 router.get("/myorders", protect, async (req, res) => {
   try {
@@ -47,7 +46,6 @@ router.get("/myorders", protect, async (req, res) => {
     res.json(orders);
   } catch (error) {
     console.error(error);
-
     res.status(500).json({ message: "Failed to fetch orders" });
   }
 });
@@ -64,7 +62,6 @@ router.get("/admin", protect, admin, async (req, res) => {
     res.json(orders);
   } catch (error) {
     console.error(error);
-
     res.status(500).json({ message: "Failed to fetch orders" });
   }
 });
@@ -91,7 +88,7 @@ router.put("/:id/status", protect, admin, async (req, res) => {
 });
 
 // ==========================
-// CANCEL ORDER (USER)
+// CANCEL ORDER
 // ==========================
 router.put("/:id/cancel", protect, async (req, res) => {
   try {
@@ -101,7 +98,6 @@ router.put("/:id/cancel", protect, async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Allow owner OR admin
     if (
       order.user.toString() !== req.user._id.toString() &&
       req.user.role !== "admin"
@@ -120,38 +116,67 @@ router.put("/:id/cancel", protect, async (req, res) => {
   }
 });
 
+// ==========================
+// ASSIGN ORDER TO EMPLOYEE
+// ==========================
 router.put("/:id/assign", protect, admin, async (req, res) => {
-  const order = await Order.findById(req.params.id);
+  try {
+    const order = await Order.findById(req.params.id);
 
-  order.assignedEmployee = req.body.employeeId;
-  order.orderStatus = "Assigned";
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
 
-  await order.save();
+    order.assignedEmployee = req.body.employeeId;
+    order.status = "Shipped";
 
-  res.json(order);
-});
+    await order.save();
 
-router.get("/employee/orders", protect, async (req, res) => {
-  const orders = await Order.find({
-    assignedEmployee: req.user._id,
-    orderStatus: "Assigned",
-  }).populate("items.product", "name price");
-
-  res.json(orders);
-});
-
-router.put("/employee/orders/:id/deliver", protect, async (req, res) => {
-  const order = await Order.findById(req.params.id);
-
-  if (order.assignedEmployee.toString() !== req.user._id.toString()) {
-    return res.status(401).json({ message: "Not authorized" });
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ message: "Order assignment failed" });
   }
+});
 
-  order.orderStatus = "Delivered";
+// ==========================
+// GET EMPLOYEE ORDERS
+// ==========================
+router.get("/employee/orders", protect, async (req, res) => {
+  try {
+    const orders = await Order.find({
+      assignedEmployee: req.user._id,
+      status: "Shipped",
+    }).populate("items.product", "name price");
 
-  await order.save();
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch employee orders" });
+  }
+});
 
-  res.json({ message: "Order delivered" });
+// ==========================
+// EMPLOYEE MARK DELIVERED
+// ==========================
+router.put("/employee/orders/:id/deliver", protect, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (order.assignedEmployee.toString() !== req.user._id.toString()) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    order.status = "Delivered";
+
+    await order.save();
+
+    res.json({ message: "Order delivered" });
+  } catch (error) {
+    res.status(500).json({ message: "Delivery update failed" });
+  }
 });
 
 module.exports = router;

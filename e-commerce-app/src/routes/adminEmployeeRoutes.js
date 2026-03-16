@@ -8,101 +8,122 @@ const sendEmail = require("../utils/sendEmail");
 const { protect } = require("../middleware/authMiddleware");
 const admin = require("../middleware/adminMiddleware");
 
-// GET ALL EMPLOYEES
-// router.get("/", protect, admin, async (req, res) => {
-//   const employees = await User.find({ role: "employee" });
-//   res.json(employees);
-// });
-
+// ==========================
+// GENERATE TEMP PASSWORD
+// ==========================
 function generateTempPassword() {
   return Math.random().toString(36).slice(-8);
 }
 
-router.get("/", async (req, res) => {
-  const employees = await User.find({ role: "employee" }).select("-password");
+// ==========================
+// GET ALL EMPLOYEES
+// ==========================
+router.get("/", protect, admin, async (req, res) => {
+  try {
+    const employees = await User.find({ role: "employee" }).select("-password");
 
-  res.json(employees);
+    res.json(employees);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch employees" });
+  }
 });
 
+// ==========================
 // CREATE EMPLOYEE
+// ==========================
 router.post("/", protect, admin, async (req, res) => {
-  const { name, email } = req.body;
+  try {
+    const { name, email } = req.body;
 
-  const tempPassword = generateTempPassword();
+    const tempPassword = generateTempPassword();
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
-  const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    const employee = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: "employee",
+    });
 
-  const employee = await User.create({
-    name,
-    email,
-    hashedPassword,
-    role: "employee",
-  });
-
-  await employee.save();
-
-  res.json({
-    message: "Employee created",
-    tempPassword,
-  });
+    res.json({
+      message: "Employee created",
+      tempPassword,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Employee creation failed" });
+  }
 });
 
+// ==========================
+// PAY SALARY
+// ==========================
 router.put("/:id/pay-salary", protect, admin, async (req, res) => {
-  const employee = await User.findById(req.params.id);
+  try {
+    const employee = await User.findById(req.params.id);
 
-  if (!employee) {
-    return res.status(404).json({ message: "Employee not found" });
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    employee.salary = (employee.salary || 0) + Number(req.body.amount);
+
+    await employee.save();
+
+    res.json({
+      message: "Salary paid successfully",
+      salary: employee.salary,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Salary payment failed" });
   }
-
-  employee.salary += req.body.amount;
-
-  await employee.save();
-
-  res.json({
-    message: "Salary paid successfully",
-    salary: employee.salary,
-  });
 });
 
-router.put("/:id", protect, admin, async (req, res) => {
-  const employee = await User.findById(req.params.id);
-
-  employee.name = req.body.name;
-  employee.email = req.body.email;
-  employee.salary = req.body.salary;
-
-  await employee.save();
-
-  res.json(employee);
-});
-
+// ==========================
 // UPDATE EMPLOYEE
+// ==========================
 router.put("/:id", protect, admin, async (req, res) => {
-  const employee = await User.findById(req.params.id);
+  try {
+    const employee = await User.findById(req.params.id);
 
-  employee.name = req.body.name;
-  employee.email = req.body.email;
-  employee.salary = req.body.salary;
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
 
-  await employee.save();
+    employee.name = req.body.name || employee.name;
+    employee.email = req.body.email || employee.email;
+    employee.salary = req.body.salary ?? employee.salary;
 
-  res.json(employee);
-});
+    await employee.save();
 
-// DELETE EMPLOYEE
-router.delete("/:id", protect, admin, async (req, res) => {
-  const employee = await User.findById(req.params.id);
-
-  if (!employee) {
-    return res.status(404).json({ message: "Employee not found" });
+    res.json(employee);
+  } catch (error) {
+    res.status(500).json({ message: "Employee update failed" });
   }
-
-  await employee.deleteOne();
-
-  res.json({ message: "Employee removed" });
 });
 
-router.post("/invite", async (req, res) => {
+// ==========================
+// DELETE EMPLOYEE
+// ==========================
+router.delete("/:id", protect, admin, async (req, res) => {
+  try {
+    const employee = await User.findById(req.params.id);
+
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    await employee.deleteOne();
+
+    res.json({ message: "Employee removed" });
+  } catch (error) {
+    res.status(500).json({ message: "Delete employee failed" });
+  }
+});
+
+// ==========================
+// SEND EMPLOYEE INVITE
+// ==========================
+router.post("/invite", protect, admin, async (req, res) => {
   try {
     const { name, email } = req.body;
 
