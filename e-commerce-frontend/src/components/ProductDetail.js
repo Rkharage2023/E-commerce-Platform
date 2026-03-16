@@ -1,16 +1,16 @@
 import defaultImage from "../assets/default-product.png";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import axios from "axios"; // Assuming axios is installed
-import { useDispatch, useSelector } from "react-redux";
-import { addItem, selectCartItems } from "../store/cartSlice";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { addItem } from "../store/cartSlice";
 
 function ProductDetail() {
-  const { id } = useParams(); // Get product ID from URL
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -18,10 +18,11 @@ function ProductDetail() {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        // Replace with your actual API endpoint
+
         const response = await axios.get(
           `https://e-commerce-platform-yogr.onrender.com/api/products/${id}`,
         );
+
         setProduct(response.data);
         setError(null);
       } catch (err) {
@@ -38,43 +39,70 @@ function ProductDetail() {
   const handleAddToCart = () => {
     if (product) {
       dispatch(addItem(product));
-
       alert(`${product.name} added to cart`);
-
       navigate("/cart");
     }
   };
 
   if (loading)
-    return <div className="text-center py-10">Loading product...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-700 dark:text-white">
+        Loading product...
+      </div>
+    );
+
   if (error)
-    return <div className="text-center py-10 text-red-500">{error}</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-500">
+        {error}
+      </div>
+    );
+
   if (!product)
-    return <div className="text-center py-10">Product not found.</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-700 dark:text-white">
+        Product not found.
+      </div>
+    );
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen py-16">
-      <div className="container mx-auto px-6">
+    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen py-10 px-4 sm:px-6 md:px-10">
+      <div className="max-w-6xl mx-auto">
         <div
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8
-      flex flex-col md:flex-row items-center gap-10"
+          className="
+          bg-white dark:bg-gray-800
+          rounded-xl
+          shadow-lg
+          p-6 sm:p-8
+          flex flex-col lg:flex-row
+          items-center
+          gap-8
+          "
         >
-          {/* Product Image */}
+          {/* PRODUCT IMAGE */}
 
-          <img
-            src={defaultImage}
-            alt={product.name}
-            className="w-52 md:w-1/2 h-auto object-cover rounded-lg shadow-md"
-          />
+          <div className="w-full lg:w-1/2 flex justify-center">
+            <img
+              src={defaultImage}
+              alt={product.name}
+              className="
+              w-64 sm:w-80 lg:w-full
+              max-h-96
+              object-cover
+              rounded-lg
+              shadow-md
+              "
+            />
+          </div>
 
-          {/* Product Details */}
+          {/* PRODUCT DETAILS */}
 
-          <div className="md:w-1/2">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-white">
+          <div className="w-full lg:w-1/2">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-800 dark:text-white">
               {product.name}
             </h2>
 
-            <p className="text-2xl text-blue-600 dark:text-blue-400 font-bold mb-6">
+            <p className="text-2xl text-blue-600 dark:text-blue-400 font-bold mb-4">
               ${product.price.toFixed(2)}
             </p>
 
@@ -92,10 +120,20 @@ function ProductDetail() {
 
             <button
               onClick={handleAddToCart}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold
-            hover:bg-blue-700 transition duration-300
-            disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={!product}
+              className="
+              bg-blue-600
+              text-white
+              px-6
+              py-3
+              rounded-lg
+              font-semibold
+              hover:bg-blue-700
+              transition
+              disabled:opacity-50
+              disabled:cursor-not-allowed
+              w-full sm:w-auto
+              "
             >
               Add To Cart
             </button>

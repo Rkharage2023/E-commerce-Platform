@@ -48,7 +48,6 @@ function AdminOrders() {
     }
   };
 
-  // FETCH ORDERS
   const fetchOrders = async () => {
     try {
       const res = await axios.get(
@@ -68,7 +67,6 @@ function AdminOrders() {
     }
   };
 
-  // UPDATE ORDER STATUS
   const updateStatus = async (id, status) => {
     try {
       await axios.put(
@@ -88,7 +86,6 @@ function AdminOrders() {
     }
   };
 
-  // CANCEL ORDER
   const cancelOrder = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this order?")) {
       return;
@@ -121,117 +118,121 @@ function AdminOrders() {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-gray-100 dark:bg-gray-900">
-      <h1 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">
-        Manage Orders
-      </h1>
+    <div className="min-h-screen px-4 sm:px-6 md:px-10 py-8 bg-gray-100 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 text-gray-900 dark:text-white">
+          Manage Orders
+        </h1>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-200 dark:bg-gray-700">
-            <tr>
-              <th className="p-3">Order ID</th>
-              <th className="p-3">Customer</th>
-              <th className="p-3">Items</th>
-              <th className="p-3">Total</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Assign Employee</th>
-              <th className="p-3">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {orders.map((order) => (
-              <tr
-                key={order._id}
-                className="border-b hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <td className="p-3 dark:text-white">{order._id.slice(-6)}</td>
-
-                <td className="p-3 dark:text-white">
-                  {order.user?.name || "Unknown"}
-                </td>
-
-                <td className="p-3 dark:text-white">
-                  {order.items.length} items
-                </td>
-
-                <td className="p-3 dark:text-white">${order.totalPrice}</td>
-
-                <td className="p-3">
-                  <select
-                    onChange={(e) => assignOrder(order._id, e.target.value)}
-                    className="border rounded p-1"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>
-                      Assign
-                    </option>
-
-                    {employees.map((emp) => (
-                      <option key={emp._id} value={emp._id}>
-                        {emp.name}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-
-                {/* STATUS */}
-
-                <td className="p-3">
-                  <span
-                    className={`px-3 py-1 rounded text-sm font-semibold
-                    ${
-                      order.status === "Delivered"
-                        ? "bg-green-500 text-white"
-                        : order.status === "Shipped"
-                          ? "bg-blue-500 text-white"
-                          : order.status === "Cancelled"
-                            ? "bg-red-500 text-white"
-                            : "bg-yellow-500 text-white"
-                    }`}
-                  >
-                    {order.status}
-                  </span>
-                </td>
-
-                {/* ACTION BUTTONS */}
-
-                <td className="p-3 space-x-2">
-                  <button
-                    disabled={
-                      order.status === "Delivered" ||
-                      order.status === "Cancelled"
-                    }
-                    onClick={() => updateStatus(order._id, "Shipped")}
-                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 disabled:opacity-50"
-                  >
-                    Ship
-                  </button>
-
-                  <button
-                    disabled={
-                      order.status === "Delivered" ||
-                      order.status === "Cancelled"
-                    }
-                    onClick={() => updateStatus(order._id, "Delivered")}
-                    className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 disabled:opacity-50"
-                  >
-                    Deliver
-                  </button>
-
-                  <button
-                    disabled={order.status === "Cancelled"}
-                    onClick={() => cancelOrder(order._id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 disabled:opacity-50"
-                  >
-                    Cancel
-                  </button>
-                </td>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-x-auto">
+          <table className="w-full text-sm sm:text-base">
+            <thead className="bg-gray-200 dark:bg-gray-700">
+              <tr>
+                <th className="p-3 text-left">Order ID</th>
+                <th className="p-3 text-left">Customer</th>
+                <th className="p-3 text-left">Items</th>
+                <th className="p-3 text-left">Total</th>
+                <th className="p-3 text-left">Status</th>
+                <th className="p-3 text-left">Assign Employee</th>
+                <th className="p-3 text-left">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {orders.map((order) => (
+                <tr
+                  key={order._id}
+                  className="border-b dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <td className="p-3 dark:text-white">{order._id.slice(-6)}</td>
+
+                  <td className="p-3 dark:text-white">
+                    {order.user?.name || "Unknown"}
+                  </td>
+
+                  <td className="p-3 dark:text-white">
+                    {order.items.length} items
+                  </td>
+
+                  <td className="p-3 dark:text-white">${order.totalPrice}</td>
+
+                  {/* STATUS */}
+
+                  <td className="p-3">
+                    <span
+                      className={`px-3 py-1 rounded text-xs sm:text-sm font-semibold
+                      ${
+                        order.status === "Delivered"
+                          ? "bg-green-500 text-white"
+                          : order.status === "Shipped"
+                            ? "bg-blue-500 text-white"
+                            : order.status === "Cancelled"
+                              ? "bg-red-500 text-white"
+                              : "bg-yellow-500 text-white"
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                  </td>
+
+                  {/* ASSIGN EMPLOYEE */}
+
+                  <td className="p-3">
+                    <select
+                      onChange={(e) => assignOrder(order._id, e.target.value)}
+                      className="border rounded p-1 dark:bg-gray-700 dark:text-white"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>
+                        Assign
+                      </option>
+
+                      {employees.map((emp) => (
+                        <option key={emp._id} value={emp._id}>
+                          {emp.name}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+
+                  {/* ACTION BUTTONS */}
+
+                  <td className="p-3 flex flex-wrap gap-2">
+                    <button
+                      disabled={
+                        order.status === "Delivered" ||
+                        order.status === "Cancelled"
+                      }
+                      onClick={() => updateStatus(order._id, "Shipped")}
+                      className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 disabled:opacity-50"
+                    >
+                      Ship
+                    </button>
+
+                    <button
+                      disabled={
+                        order.status === "Delivered" ||
+                        order.status === "Cancelled"
+                      }
+                      onClick={() => updateStatus(order._id, "Delivered")}
+                      className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 disabled:opacity-50"
+                    >
+                      Deliver
+                    </button>
+
+                    <button
+                      disabled={order.status === "Cancelled"}
+                      onClick={() => cancelOrder(order._id)}
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

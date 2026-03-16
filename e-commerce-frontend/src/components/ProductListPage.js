@@ -25,22 +25,24 @@ function ProductListPage() {
   }, []);
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen py-12">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Page Title */}
+    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen py-10 px-4 sm:px-6 md:px-10">
+      <div className="max-w-7xl mx-auto">
+        {/* PAGE TITLE */}
 
-        <h1 className="text-4xl font-bold mb-10 text-gray-800 dark:text-white">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-10 text-gray-800 dark:text-white">
           All Products
         </h1>
 
-        {/* Loading */}
+        {/* LOADING */}
 
         {loading ? (
-          <p className="text-gray-600 dark:text-gray-300">
+          <div className="flex justify-center items-center py-20 text-gray-600 dark:text-gray-300">
             Loading products...
-          </p>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          /* PRODUCT GRID */
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}

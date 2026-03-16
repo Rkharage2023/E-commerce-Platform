@@ -8,7 +8,7 @@ function ProductCard({ product }) {
   const dispatch = useDispatch();
 
   const handleAddToCart = (e) => {
-    e.preventDefault(); // prevents link navigation
+    e.preventDefault();
     dispatch(addItem(product));
     alert(`${product.name} added to cart`);
   };
@@ -27,45 +27,48 @@ function ProductCard({ product }) {
       transition duration-300
       overflow-hidden
       group
+      flex flex-col
       "
     >
-      <Link to={`/products/${product._id}`}>
+      <Link to={`/products/${product._id}`} className="flex-grow">
+        {/* IMAGE */}
+
         <div className="overflow-hidden">
           <img
             src={defaultImage}
             alt={product.name}
             className="
-            w--52 h-52 object-cover
+            w-full h-48 sm:h-52
+            object-cover
             group-hover:scale-110
             transition duration-300
             "
           />
         </div>
 
+        {/* PRODUCT DETAILS */}
+
         <div className="p-4">
-          {/* Product Name */}
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">
             {product.name}
           </h3>
 
-          {/* Category */}
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {product.category}
           </p>
 
-          {/* Price */}
           <p className="text-blue-600 dark:text-blue-400 font-bold mt-2 text-lg">
             ${product.price}
           </p>
 
-          {/* Stock */}
           <p className="text-sm mt-1 text-gray-600 dark:text-gray-300">
             {product.countInStock > 0 ? "In Stock" : "Out of Stock"}
           </p>
         </div>
       </Link>
 
-      {/* Add to Cart Button */}
+      {/* ADD TO CART */}
+
       <div className="px-4 pb-4">
         <button
           onClick={handleAddToCart}

@@ -47,55 +47,62 @@ function EmployeeDashboard() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gray-100 dark:bg-gray-900">
-      <h1 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">
-        Employee Dashboard
-      </h1>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 px-4 sm:px-6 md:px-10 py-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 text-gray-900 dark:text-white">
+          Employee Dashboard
+        </h1>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-200 dark:bg-gray-700">
-            <tr>
-              <th className="p-3">Order ID</th>
-              <th className="p-3">Customer</th>
-              <th className="p-3">Items</th>
-              <th className="p-3">Total</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Action</th>
-            </tr>
-          </thead>
+        {/* ORDERS TABLE */}
 
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order._id} className="border-b">
-                <td className="p-3 dark:text-white">{order._id.slice(-6)}</td>
-
-                <td className="p-3 dark:text-white">{order.user?.name}</td>
-
-                <td className="p-3 dark:text-white">
-                  {order.items.length} items
-                </td>
-
-                <td className="p-3 dark:text-white">${order.totalPrice}</td>
-
-                <td className="p-3">
-                  <span className="bg-blue-500 text-white px-3 py-1 rounded">
-                    {order.orderStatus}
-                  </span>
-                </td>
-
-                <td className="p-3">
-                  <button
-                    onClick={() => markDelivered(order._id)}
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                  >
-                    Mark Delivered
-                  </button>
-                </td>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-x-auto">
+          <table className="w-full text-sm sm:text-base">
+            <thead className="bg-gray-200 dark:bg-gray-700">
+              <tr>
+                <th className="p-3 text-left">Order ID</th>
+                <th className="p-3 text-left">Customer</th>
+                <th className="p-3 text-left">Items</th>
+                <th className="p-3 text-left">Total</th>
+                <th className="p-3 text-left">Status</th>
+                <th className="p-3 text-left">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {orders.map((order) => (
+                <tr
+                  key={order._id}
+                  className="border-b dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                >
+                  <td className="p-3 dark:text-white">{order._id.slice(-6)}</td>
+
+                  <td className="p-3 dark:text-white">{order.user?.name}</td>
+
+                  <td className="p-3 dark:text-white">
+                    {order.items.length} items
+                  </td>
+
+                  <td className="p-3 dark:text-white">${order.totalPrice}</td>
+
+                  <td className="p-3">
+                    <span className="bg-blue-500 text-white px-3 py-1 rounded text-sm">
+                      {order.orderStatus}
+                    </span>
+                  </td>
+
+                  <td className="p-3">
+                    <button
+                      onClick={() => markDelivered(order._id)}
+                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition w-full sm:w-auto"
+                    >
+                      Mark Delivered
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

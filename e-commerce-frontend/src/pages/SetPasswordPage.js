@@ -21,19 +21,47 @@ function SetPasswordPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <form onSubmit={submit} className="bg-white p-8 rounded shadow">
-        <h2 className="text-xl mb-4">Create Password</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
+      <form
+        onSubmit={submit}
+        className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-md"
+      >
+        <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center text-gray-800 dark:text-white">
+          Create Password
+        </h2>
 
         <input
           type="password"
           placeholder="New Password"
-          className="border p-2 w-full mb-4"
+          className="
+          border
+          border-gray-300
+          p-2.5
+          rounded-lg
+          w-full
+          mb-4
+          focus:outline-none
+          focus:ring-2
+          focus:ring-blue-500
+          dark:bg-gray-700
+          dark:border-gray-600
+          dark:text-white
+          "
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button className="bg-blue-500 text-white px-4 py-2 rounded">
+        <button
+          className="
+          w-full
+          bg-blue-600
+          hover:bg-blue-700
+          text-white
+          py-2.5
+          rounded-lg
+          transition
+          "
+        >
           Set Password
         </button>
       </form>

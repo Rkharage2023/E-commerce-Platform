@@ -1,25 +1,23 @@
-require("dotenv").config();
+import dotenv from "dotenv";
 
-const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
-const passport = require("passport");
-const favicon = require("serve-favicon");
-const path = require("path");
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import passport from "passport";
 
-const connectDB = require("./src/config/db");
+import connectDB from "./src/config/db.js";
 
-const authRoutes = require("./src/routes/authRoutes");
-const productRoutes = require("./src/routes/productRoutes");
-const cartRoutes = require("./src/routes/cartRoutes");
-const orderRoutes = require("./src/routes/orderRoutes");
-const adminEmployeeRoutes = require("./src/routes/adminEmployeeRoutes");
+import authRoutes from "./src/routes/authRoutes.js";
+import productRoutes from "./src/routes/productRoutes.js";
+import cartRoutes from "./src/routes/cartRoutes.js";
+import orderRoutes from "./src/routes/orderRoutes.js";
+import adminEmployeeRoutes from "./src/routes/adminEmployeeRoutes.js";
 
-require("./src/config/passport");
+import "./src/config/passport.js";
+dotenv.config();
 
 const app = express();
-
 const PORT = process.env.PORT || 5000;
 
 /* SECURITY */
@@ -33,14 +31,6 @@ const limiter = rateLimit({
 app.use(limiter);
 
 /* CORS */
-const allowedOrigins = [
-  "https://eproductsplatform.netlify.app/",
-  "http://localhost:3000",
-];
-
-/* MIDDLEWARE */
-app.use(express.json());
-
 app.use(
   cors({
     origin: ["http://localhost:3000", "https://eproductsplatform.netlify.app"],
@@ -48,6 +38,10 @@ app.use(
     credentials: true,
   }),
 );
+
+/* MIDDLEWARE */
+app.use(express.json());
+app.use(passport.initialize());
 
 /* DATABASE */
 connectDB();
@@ -61,7 +55,7 @@ app.use("/api/admin/employees", adminEmployeeRoutes);
 
 /* ROOT TEST */
 app.get("/", (req, res) => {
-  res.send("E-commerce Backend API Running ");
+  res.send("E-commerce Backend API Running");
 });
 
 app.listen(PORT, () => {

@@ -30,7 +30,6 @@ function AdminEmployees() {
     }
   };
 
-  // ADD EMPLOYEE
   const addEmployee = async (e) => {
     e.preventDefault();
 
@@ -57,7 +56,6 @@ function AdminEmployees() {
     }
   };
 
-  // DELETE EMPLOYEE
   const deleteEmployee = async (id) => {
     if (!window.confirm("Delete this employee?")) return;
 
@@ -77,7 +75,6 @@ function AdminEmployees() {
     }
   };
 
-  // SEND INVITE EMAIL
   const sendInvite = async (name, email) => {
     try {
       await axios.post(
@@ -97,7 +94,6 @@ function AdminEmployees() {
     }
   };
 
-  // PAY SALARY
   const paySalary = async (id) => {
     const amount = prompt("Enter salary amount");
 
@@ -123,118 +119,114 @@ function AdminEmployees() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8">
-      <h1 className="text-3xl font-bold mb-8 dark:text-white">
-        Manage Employees
-      </h1>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 px-4 sm:px-6 md:px-10 py-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-8 dark:text-white">
+          Manage Employees
+        </h1>
 
-      {/* ADD EMPLOYEE FORM */}
+        {/* ADD EMPLOYEE FORM */}
 
-      <form
-        onSubmit={addEmployee}
-        className="bg-white dark:bg-gray-800 p-6 rounded shadow mb-8"
-      >
-        <div className="grid md:grid-cols-3 gap-4">
-          <input
-            type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="p-2 border rounded"
-            required
-          />
+        <form
+          onSubmit={addEmployee}
+          className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow mb-8"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input
+              type="text"
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="p-2 border rounded-lg w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              required
+            />
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="p-2 border rounded"
-            required
-          />
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="p-2 border rounded-lg w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              required
+            />
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="p-2 border rounded"
-            required
-          />
-        </div>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="p-2 border rounded-lg w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              required
+            />
+          </div>
 
-        <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          Add Employee
-        </button>
-      </form>
+          <button className="mt-4 w-full md:w-auto bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">
+            Add Employee
+          </button>
+        </form>
 
-      {/* EMPLOYEE TABLE */}
+        {/* EMPLOYEE TABLE */}
 
-      <div className="bg-white dark:bg-gray-800 rounded shadow overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-200 dark:bg-gray-700">
-            <tr>
-              <th className="p-3">Name</th>
-              <th className="p-3">Email</th>
-              <th className="p-3">Invite Status</th>
-              <th className="p-3">Salary</th>
-              <th className="p-3">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {employees.map((emp) => (
-              <tr key={emp._id} className="border-b">
-                <td className="p-3 dark:text-white">{emp.name}</td>
-
-                <td className="p-3 dark:text-white">{emp.email}</td>
-
-                {/* Invite Status */}
-
-                <td className="p-3">
-                  <span
-                    className={
-                      emp.inviteStatus === "Active"
-                        ? "text-green-600"
-                        : "text-yellow-600"
-                    }
-                  >
-                    {emp.inviteStatus}
-                  </span>
-                </td>
-
-                {/* Salary */}
-
-                <td className="p-3 dark:text-white">${emp.salary || 0}</td>
-
-                {/* ACTION BUTTONS */}
-
-                <td className="p-3 space-x-2">
-                  <button
-                    onClick={() => sendInvite(emp.name, emp.email)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                  >
-                    Invite
-                  </button>
-
-                  <button
-                    onClick={() => paySalary(emp._id)}
-                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
-                  >
-                    Pay Salary
-                  </button>
-
-                  <button
-                    onClick={() => deleteEmployee(emp._id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                </td>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-x-auto">
+          <table className="w-full text-sm sm:text-base">
+            <thead className="bg-gray-200 dark:bg-gray-700">
+              <tr>
+                <th className="p-3 text-left">Name</th>
+                <th className="p-3 text-left">Email</th>
+                <th className="p-3 text-left">Invite Status</th>
+                <th className="p-3 text-left">Salary</th>
+                <th className="p-3 text-left">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {employees.map((emp) => (
+                <tr key={emp._id} className="border-b dark:border-gray-700">
+                  <td className="p-3 dark:text-white">{emp.name}</td>
+
+                  <td className="p-3 dark:text-white">{emp.email}</td>
+
+                  <td className="p-3">
+                    <span
+                      className={
+                        emp.inviteStatus === "Active"
+                          ? "text-green-600 font-medium"
+                          : "text-yellow-600 font-medium"
+                      }
+                    >
+                      {emp.inviteStatus}
+                    </span>
+                  </td>
+
+                  <td className="p-3 dark:text-white">${emp.salary || 0}</td>
+
+                  <td className="p-3 flex flex-wrap gap-2">
+                    <button
+                      onClick={() => sendInvite(emp.name, emp.email)}
+                      className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                    >
+                      Invite
+                    </button>
+
+                    <button
+                      onClick={() => paySalary(emp._id)}
+                      className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+                    >
+                      Pay Salary
+                    </button>
+
+                    <button
+                      onClick={() => deleteEmployee(emp._id)}
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
