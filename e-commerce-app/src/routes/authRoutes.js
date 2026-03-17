@@ -157,7 +157,8 @@ router.get(
   (req, res) => {
     const token = generateToken(req.user._id);
 
-    const redirectUrl = `${process.env.CLIENT_URL || "http://localhost:3000"}/google-success?token=${token}`;
+    const redirectUrl = `${process.env.CLIENT_URL}/google-success?token=${token}`;
+    res.redirect(redirectUrl);
 
     res.redirect(redirectUrl);
   },
