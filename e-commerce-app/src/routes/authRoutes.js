@@ -19,6 +19,8 @@ const generateToken = (id) => {
 // ==========================
 router.post("/register", async (req, res) => {
   const { name, email, password, role } = req.body;
+  console.log("REGISTER API HIT");
+  console.log(req.body);
 
   try {
     const userExists = await User.findOne({ email });
@@ -41,6 +43,7 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
       role: role || "user",
     });
+    console.log("USER SAVED:", user); 
 
     res.status(201).json({
       _id: user._id,
@@ -49,6 +52,7 @@ router.post("/register", async (req, res) => {
       role: user.role,
       token: generateToken(user._id),
     });
+    console.log("Registration success");
   } catch (error) {
     console.error("Registration Error:", error);
 
@@ -64,27 +68,31 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  try {
-    const user = await User.findOne({ email });
+  console.log("LOGIN EMAIL:", email);
+  console.log("LOGIN PASSWORD:", password);
 
-    if (user && (await user.matchPassword(password))) {
-      res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        token: generateToken(user._id),
-      });
-    } else {
-      res.status(401).json({
-        message: "Invalid email or password",
-      });
-    }
-  } catch (error) {
-    console.error("Login Error:", error);
-    res.status(500).json({
-      message: "Server Error during login",
+  const user = await User.findOne({ email });
+
+  console.log("DB USER:", user);
+
+  if (!user) {
+    return res.status(401).json({ message: "User not found" });
+  }
+
+  const isMatch = await user.matchPassword(password);
+
+  console.log("PASSWORD MATCH:", isMatch);
+
+  if (isMatch) {
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id),
     });
+  } else {
+    res.status(401).json({ message: "Password incorrect" });
   }
 });
 

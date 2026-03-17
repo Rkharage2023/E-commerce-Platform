@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../utils/api";
 
 function SetPasswordPage() {
   const { token } = useParams();
@@ -11,7 +12,7 @@ function SetPasswordPage() {
   const submit = async (e) => {
     e.preventDefault();
 
-    await axios.post(`http://localhost:5000/api/auth/set-password/${token}`, {
+    await axios.post(`${API_URL}/api/auth/set-password/${token}`, {
       password,
     });
 

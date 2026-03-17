@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { API_URL } from "../utils/api";
 
 function AddProduct() {
   const [name, setName] = useState("");
@@ -11,7 +12,7 @@ function AddProduct() {
     const token = localStorage.getItem("jwtToken");
 
     await axios.post(
-      "https://e-commerce-platform-yogr.onrender.com/api/products",
+      `${API_URL}/api/products`,
       {
         name,
         price,

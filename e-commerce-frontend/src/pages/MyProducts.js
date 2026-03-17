@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "../utils/api";
 
 function MyProducts() {
   const [orders, setOrders] = useState([]);
@@ -8,14 +9,11 @@ function MyProducts() {
     const fetchOrders = async () => {
       const token = localStorage.getItem("jwtToken");
 
-      const res = await axios.get(
-        "https://e-commerce-platform-yogr.onrender.com/api/orders/myorders",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const res = await axios.get(`${API_URL}/api/orders/myorders`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       setOrders(res.data);
     };

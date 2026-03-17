@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
+import { API_URL } from "../utils/api";
 
 function ProductListPage() {
   const [products, setProducts] = useState([]);
@@ -9,9 +10,7 @@ function ProductListPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(
-          "https://e-commerce-platform-yogr.onrender.com/api/products",
-        );
+        const res = await axios.get(`${API_URL}/api/products`);
 
         setProducts(res.data);
         setLoading(false);

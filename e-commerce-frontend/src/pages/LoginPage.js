@@ -3,6 +3,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { setCredentials } from "../store/authSlice";
+import { API_URL } from "../utils/api";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ function LoginPage() {
 
     try {
       const response = await axios.post(
-        "https://e-commerce-platform-yogr.onrender.com/api/auth/login",
+        `${API_URL}/api/auth/login`,
         {
           email,
           password,

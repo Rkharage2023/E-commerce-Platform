@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addItem } from "../store/cartSlice";
+import { API_URL } from "../utils/api";
 
 function ProductDetail() {
   const { id } = useParams();
@@ -19,9 +20,7 @@ function ProductDetail() {
       try {
         setLoading(true);
 
-        const response = await axios.get(
-          `https://e-commerce-platform-yogr.onrender.com/api/products/${id}`,
-        );
+        const response = await axios.get(`${API_URL}/api/products/${id}`);
 
         setProduct(response.data);
         setError(null);

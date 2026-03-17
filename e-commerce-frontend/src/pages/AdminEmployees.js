@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "../utils/api";
 
 function AdminEmployees() {
   const [employees, setEmployees] = useState([]);
@@ -16,7 +17,7 @@ function AdminEmployees() {
   const fetchEmployees = async () => {
     try {
       const res = await axios.get(
-        "https://e-commerce-platform-yogr.onrender.com/api/admin/employees",
+        `${API_URL}/api/admin/employees`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -35,7 +36,7 @@ function AdminEmployees() {
 
     try {
       await axios.post(
-        "https://e-commerce-platform-yogr.onrender.com/api/admin/employees",
+        `${API_URL}/api/admin/employees`,
         { name, email, password },
         {
           headers: {
@@ -61,7 +62,7 @@ function AdminEmployees() {
 
     try {
       await axios.delete(
-        `https://e-commerce-platform-yogr.onrender.com/api/admin/employees/${id}`,
+        `${API_URL}/api/admin/employees/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -78,7 +79,7 @@ function AdminEmployees() {
   const sendInvite = async (name, email) => {
     try {
       await axios.post(
-        "https://e-commerce-platform-yogr.onrender.com/api/admin/employees/invite",
+        `${API_URL}/api/admin/employees/invite`,
         { name, email },
         {
           headers: {
@@ -101,7 +102,7 @@ function AdminEmployees() {
 
     try {
       await axios.put(
-        `https://e-commerce-platform-yogr.onrender.com/api/admin/employees/${id}/pay-salary`,
+        `${API_URL}/api/admin/employees/${id}/pay-salary`,
         { amount },
         {
           headers: {

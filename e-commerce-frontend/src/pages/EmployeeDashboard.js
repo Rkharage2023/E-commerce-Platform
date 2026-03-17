@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "../utils/api";
 
 function EmployeeDashboard() {
   const [orders, setOrders] = useState([]);
@@ -14,7 +15,7 @@ function EmployeeDashboard() {
   const fetchOrders = async () => {
     try {
       const res = await axios.get(
-        "https://e-commerce-platform-yogr.onrender.com/api/orders/employee/orders",
+        `${API_URL}/api/orders/employee/orders`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -31,7 +32,7 @@ function EmployeeDashboard() {
   const markDelivered = async (id) => {
     try {
       await axios.put(
-        `https://e-commerce-platform-yogr.onrender.com/api/orders/employee/orders/${id}/deliver`,
+        `${API_URL}/api/orders/employee/orders/${id}/deliver`,
         {},
         {
           headers: {

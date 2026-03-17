@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "../utils/api";
 
 function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -21,9 +22,7 @@ function AdminProducts() {
   }, []);
 
   const fetchProducts = async () => {
-    const res = await axios.get(
-      "https://e-commerce-platform-yogr.onrender.com/api/products",
-    );
+    const res = await axios.get(`${API_URL}/api/products`);
 
     setProducts(res.data);
   };
@@ -31,7 +30,7 @@ function AdminProducts() {
   const saveProduct = async () => {
     if (editingId) {
       await axios.put(
-        `https://e-commerce-platform-yogr.onrender.com/api/products/${editingId}`,
+        `${API_URL}/api/products/${editingId}`,
         {
           name,
           description,
@@ -49,7 +48,7 @@ function AdminProducts() {
       setEditingId(null);
     } else {
       await axios.post(
-        "https://e-commerce-platform-yogr.onrender.com/api/products",
+        `${API_URL}/api/products`,
         {
           name,
           description,
@@ -71,12 +70,9 @@ function AdminProducts() {
 
   const deleteProduct = async (id) => {
     if (window.confirm("Delete this product?")) {
-      await axios.delete(
-        `https://e-commerce-platform-yogr.onrender.com/api/products/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      await axios.delete(`${API_URL}/api/products/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       fetchProducts();
     }

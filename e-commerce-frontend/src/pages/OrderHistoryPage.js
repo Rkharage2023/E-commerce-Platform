@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { API_URL } from "../utils/api";
 
 function OrderHistoryPage() {
   const [orders, setOrders] = useState([]);
@@ -9,14 +10,11 @@ function OrderHistoryPage() {
       try {
         const token = localStorage.getItem("jwtToken");
 
-        const res = await axios.get(
-          "https://e-commerce-platform-yogr.onrender.com/api/orders/myorders",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const res = await axios.get(`${API_URL}/api/orders/myorders`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
 
         setOrders(res.data);
       } catch (error) {
@@ -32,7 +30,7 @@ function OrderHistoryPage() {
       const token = localStorage.getItem("jwtToken");
 
       await axios.put(
-        `https://e-commerce-platform-yogr.onrender.com/api/orders/${id}/cancel`,
+        `${API_URL}/api/orders/${id}/cancel`,
         {},
         {
           headers: {

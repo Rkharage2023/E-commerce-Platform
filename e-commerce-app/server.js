@@ -35,9 +35,9 @@ app.use(limiter);
 /* CORS */
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://eproductsplatform.netlify.app"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
+    origin: "*", // 🔥 TEMP FIX (allow all)
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 

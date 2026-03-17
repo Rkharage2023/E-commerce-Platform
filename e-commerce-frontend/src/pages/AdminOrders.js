@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "../utils/api";
 
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
@@ -16,7 +17,7 @@ function AdminOrders() {
   const assignOrder = async (orderId, employeeId) => {
     try {
       await axios.put(
-        `https://e-commerce-platform-yogr.onrender.com/api/orders/${orderId}/assign`,
+        `${API_URL}/api/orders/${orderId}/assign`,
         { employeeId },
         {
           headers: {
@@ -33,14 +34,11 @@ function AdminOrders() {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get(
-        "https://e-commerce-platform-yogr.onrender.com/api/admin/employees",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const res = await axios.get(`${API_URL}/api/admin/employees`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       setEmployees(res.data);
     } catch (error) {
@@ -50,14 +48,11 @@ function AdminOrders() {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get(
-        "https://e-commerce-platform-yogr.onrender.com/api/orders/admin",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const res = await axios.get(`${API_URL}/api/orders/admin`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       setOrders(res.data);
       setLoading(false);
@@ -70,7 +65,7 @@ function AdminOrders() {
   const updateStatus = async (id, status) => {
     try {
       await axios.put(
-        `https://e-commerce-platform-yogr.onrender.com/api/orders/${id}/status`,
+        `${API_URL}/api/orders/${id}/status`,
         { status },
         {
           headers: {
@@ -93,7 +88,7 @@ function AdminOrders() {
 
     try {
       await axios.put(
-        `https://e-commerce-platform-yogr.onrender.com/api/orders/${id}/cancel`,
+        `${API_URL}/api/orders/${id}/cancel`,
         {},
         {
           headers: {

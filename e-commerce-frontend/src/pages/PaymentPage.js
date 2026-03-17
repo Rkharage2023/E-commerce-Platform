@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
+import { API_URL } from "../utils/api";
 
 function PaymentPage() {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ function PaymentPage() {
   const handlePayment = async () => {
     try {
       await axios.post(
-        "https://e-commerce-platform-yogr.onrender.com/api/orders",
+        `${API_URL}/api/orders`,
         {
           items: cartItems,
           totalPrice,

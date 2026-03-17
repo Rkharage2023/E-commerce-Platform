@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { API_URL } from "../utils/api";
 
 function RegisterPage() {
   const [name, setName] = useState("");
@@ -15,7 +16,8 @@ function RegisterPage() {
 
     try {
       await axios.post(
-        "https://e-commerce-platform-yogr.onrender.com/api/auth/register",
+        // "http://localhost:5000/api/auth/register",
+        `${API_URL}/api/auth/register`,
         {
           name,
           email,
