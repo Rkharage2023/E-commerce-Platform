@@ -17,13 +17,10 @@ function LoginPage() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        `${API_URL}/api/auth/login`,
-        {
-          email,
-          password,
-        },
-      );
+      const response = await axios.post(`${API_URL}/api/login`, {
+        email,
+        password,
+      });
 
       dispatch(
         setCredentials({
@@ -119,7 +116,7 @@ function LoginPage() {
         {/* Google Login */}
 
         <a
-          href="https://e-commerce-platform-yogr.onrender.com/api/auth/google"
+          href={`${API_URL}/api/auth/google`}
           className="flex items-center justify-center gap-3 w-full border border-gray-300 bg-white text-gray-700 py-2.5 rounded-lg shadow-sm hover:bg-gray-100 transition"
         >
           <img
