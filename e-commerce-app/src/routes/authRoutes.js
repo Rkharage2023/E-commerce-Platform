@@ -43,7 +43,7 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
       role: role || "user",
     });
-    console.log("USER SAVED:", user); 
+    console.log("USER SAVED:", user);
 
     res.status(201).json({
       _id: user._id,
@@ -165,9 +165,7 @@ router.get(
   (req, res) => {
     const token = generateToken(req.user._id);
 
-    const redirectUrl = `${process.env.CLIENT_URL}/google-success?token=${token}`;
-    res.redirect(redirectUrl);
-
+    res.redirect(`http://localhost:3000/google-success?token=${token}`);
     res.redirect(redirectUrl);
   },
 );
