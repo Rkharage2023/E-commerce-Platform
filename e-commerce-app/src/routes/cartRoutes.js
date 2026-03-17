@@ -1,8 +1,8 @@
-const express = require("express");
+import express from "express";
+import Cart from "../models/Cart.js";
+import Product from "../models/Product.js";
+import { protect } from "../middleware/authMiddleware.js"; // Only logged-in users can manage carts
 const router = express.Router();
-const Cart = require("../models/Cart");
-const Product = require("../models/Product");
-const { protect } = require("../middleware/authMiddleware"); // Only logged-in users can manage carts
 
 // --- @desc   Get user's cart ---
 // --- @route  GET /api/cart ---
@@ -162,11 +162,9 @@ router.put("/update/:productId", protect, async (req, res) => {
     }
 
     if (qty > product.countInStock) {
-      return res
-        .status(400)
-        .json({
-          message: `Quantity exceeds available stock (${product.countInStock})`,
-        });
+      return res.status(400).json({
+        message: `Quantity exceeds available stock (${product.countInStock})`,
+      });
     }
 
     cart.items[itemIndex].qty = qty;

@@ -1,44 +1,38 @@
-const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
-const passport = require("passport");
-const dotenv = require("dotenv");
-
-const connectDB = require("./src/config/db");
-
-const authRoutes = require("./src/routes/authRoutes");
-const productRoutes = require("./src/routes/productRoutes");
-const cartRoutes = require("./src/routes/cartRoutes");
-const orderRoutes = require("./src/routes/orderRoutes");
-const adminEmployeeRoutes = require("./src/routes/adminEmployeeRoutes");
-
-require("./src/config/passport");
-
+import dotenv from "dotenv";
 dotenv.config();
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import passport from "passport";
+
+import connectDB from "./src/config/db.js";
+
+import authRoutes from "./src/routes/authRoutes.js";
+import productRoutes from "./src/routes/productRoutes.js";
+import cartRoutes from "./src/routes/cartRoutes.js";
+import orderRoutes from "./src/routes/orderRoutes.js";
+import adminEmployeeRoutes from "./src/routes/adminEmployeeRoutes.js";
+
+import "./src/config/passport.js";
 
 const app = express();
-app.set("trust proxy", 1);
 const PORT = process.env.PORT || 5000;
 
-// ==========================
-// SECURITY MIDDLEWARE
-// ==========================
+/* Render proxy fix */
+app.set("trust proxy", 1);
 
-// Secure HTTP headers
+/* Security */
 app.use(helmet());
 
-// Rate limiting (prevent abuse)
+/* Rate Limit */
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
 });
-
 app.use(limiter);
 
-// ==========================
-// CORS
-// ==========================
+/* CORS */
 app.use(
   cors({
     origin: ["http://localhost:3000", "https://eproductsplatform.netlify.app"],
@@ -47,62 +41,25 @@ app.use(
   }),
 );
 
-// ==========================
-// BODY PARSER
-// ==========================
+/* Middleware */
 app.use(express.json());
-
-// ==========================
-// PASSPORT
-// ==========================
 app.use(passport.initialize());
 
-// ==========================
-// DATABASE CONNECTION
-// ==========================
+/* Database */
 connectDB();
 
-// ==========================
-// ROUTES
-// ==========================
+/* Routes */
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin/employees", adminEmployeeRoutes);
 
-// ==========================
-// ROOT ROUTE
-// ==========================
+/* Root */
 app.get("/", (req, res) => {
   res.send("E-commerce Backend API Running");
 });
 
-// ==========================
-// GLOBAL ERROR HANDLER
-// ==========================
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-
-  res.status(err.status || 500).json({
-    message: err.message || "Server Error",
-  });
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
-
-// ==========================
-// START SERVER
-// ==========================
-
-const startServer = async () => {
-  try {
-    await connectDB();
-
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error("Server failed to start:", error);
-  }
-};
-
-startServer();

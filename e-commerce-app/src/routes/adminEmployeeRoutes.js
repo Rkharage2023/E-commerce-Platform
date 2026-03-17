@@ -1,12 +1,12 @@
-const express = require("express");
+import express from "express";
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 const router = express.Router();
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
-const sendEmail = require("../utils/sendEmail");
+import crypto from "crypto";
+import sendEmail from "../utils/sendEmail.js";
 
-const { protect } = require("../middleware/authMiddleware");
-const admin = require("../middleware/adminMiddleware");
+import { protect } from "../middleware/authMiddleware.js";
+import admin from "../middleware/adminMiddleware.js";
 
 // ==========================
 // GENERATE TEMP PASSWORD

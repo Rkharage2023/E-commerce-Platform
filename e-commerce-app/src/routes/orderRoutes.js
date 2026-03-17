@@ -1,9 +1,8 @@
-const express = require("express");
+import express from "express";
+import Order from "../models/Order.js";
+import { protect } from "../middleware/authMiddleware.js";
+import admin from "../middleware/adminMiddleware.js";
 const router = express.Router();
-
-const Order = require("../models/Order");
-const { protect } = require("../middleware/authMiddleware");
-const admin = require("../middleware/adminMiddleware");
 
 // ==========================
 // CREATE ORDER (USER)

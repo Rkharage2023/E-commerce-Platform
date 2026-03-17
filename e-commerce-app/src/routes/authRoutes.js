@@ -1,10 +1,10 @@
-const express = require("express");
-const router = express.Router();
-const User = require("../models/User");
-const passport = require("passport");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+import express from "express";
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import passport from "passport";
 
+const router = express.Router();
 // ==========================
 // GENERATE JWT TOKEN
 // ==========================
