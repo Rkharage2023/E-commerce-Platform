@@ -3,8 +3,10 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import passport from "passport";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+
 // ==========================
 // GENERATE JWT TOKEN
 // ==========================
@@ -19,8 +21,6 @@ const generateToken = (id) => {
 // ==========================
 router.post("/register", async (req, res) => {
   const { name, email, password, role } = req.body;
-  console.log("REGISTER API HIT");
-  console.log(req.body);
 
   try {
     const userExists = await User.findOne({ email });
@@ -35,6 +35,7 @@ router.post("/register", async (req, res) => {
       });
     }
 
+    // Hash password once here — no pre-save hook on model
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
@@ -43,7 +44,6 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
       role: role || "user",
     });
-    console.log("USER SAVED:", user);
 
     res.status(201).json({
       _id: user._id,
@@ -52,13 +52,9 @@ router.post("/register", async (req, res) => {
       role: user.role,
       token: generateToken(user._id),
     });
-    console.log("Registration success");
   } catch (error) {
     console.error("Registration Error:", error);
-
-    res.status(500).json({
-      message: "Server Error during registration",
-    });
+    res.status(500).json({ message: "Server Error during registration" });
   }
 });
 
@@ -68,32 +64,43 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  console.log("LOGIN EMAIL:", email);
-  console.log("LOGIN PASSWORD:", password);
+  try {
+    const user = await User.findOne({ email });
 
-  const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
 
-  console.log("DB USER:", user);
+    const isMatch = await user.matchPassword(password);
 
-  if (!user) {
-    return res.status(401).json({ message: "User not found" });
+    if (isMatch) {
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token: generateToken(user._id),
+      });
+    } else {
+      res.status(401).json({ message: "Password incorrect" });
+    }
+  } catch (error) {
+    console.error("Login Error:", error);
+    res.status(500).json({ message: "Server error during login" });
   }
+});
 
-  const isMatch = await user.matchPassword(password);
-
-  console.log("PASSWORD MATCH:", isMatch);
-
-  if (isMatch) {
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      token: generateToken(user._id),
-    });
-  } else {
-    res.status(401).json({ message: "Password incorrect" });
-  }
+// ==========================
+// GET CURRENT USER PROFILE
+// Used by GoogleSuccess to fetch user data after OAuth redirect
+// ==========================
+router.get("/profile", protect, async (req, res) => {
+  res.json({
+    _id: req.user._id,
+    name: req.user.name,
+    email: req.user.email,
+    role: req.user.role,
+  });
 });
 
 // ==========================
@@ -107,9 +114,7 @@ router.post("/set-password/:token", async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({
-        message: "Invalid or expired token",
-      });
+      return res.status(400).json({ message: "Invalid or expired token" });
     }
 
     const { password } = req.body;
@@ -120,24 +125,18 @@ router.post("/set-password/:token", async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    user.password = hashedPassword;
+    // Hash password once here
+    user.password = await bcrypt.hash(password, 10);
     user.inviteStatus = "Active";
     user.inviteToken = undefined;
     user.inviteTokenExpire = undefined;
 
     await user.save();
 
-    res.json({
-      message: "Password set successfully",
-    });
+    res.json({ message: "Password set successfully" });
   } catch (error) {
     console.error(error);
-
-    res.status(500).json({
-      message: "Password setup failed",
-    });
+    res.status(500).json({ message: "Password setup failed" });
   }
 });
 
@@ -156,17 +155,14 @@ router.get(
 // ==========================
 router.get(
   "/google/callback",
-
   passport.authenticate("google", {
     session: false,
     failureRedirect: "/login",
   }),
-
   (req, res) => {
     const token = generateToken(req.user._id);
-
-    res.redirect(`http://localhost:3000/google-success?token=${token}`);
-    res.redirect(redirectUrl);
+    // Single redirect only — removed the duplicate res.redirect(redirectUrl) bug
+    res.redirect(`${process.env.CLIENT_URL}/google-success?token=${token}`);
   },
 );
 

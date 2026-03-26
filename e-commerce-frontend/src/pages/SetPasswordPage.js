@@ -8,17 +8,29 @@ function SetPasswordPage() {
   const navigate = useNavigate();
 
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    await axios.post(`${API_URL}/api/auth/set-password/${token}`, {
-      password,
-    });
-
-    alert("Password set successfully");
-
-    navigate("/login");
+    try {
+      // Fixed: added try/catch — previously any error caused unhandled rejection
+      await axios.post(`${API_URL}/api/auth/set-password/${token}`, {
+        password,
+      });
+      alert("Password set successfully");
+      navigate("/login");
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          "Failed to set password. Link may have expired.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -31,39 +43,25 @@ function SetPasswordPage() {
           Create Password
         </h2>
 
+        {error && (
+          <p className="text-red-500 text-sm text-center mb-4">{error}</p>
+        )}
+
         <input
           type="password"
-          placeholder="New Password"
-          className="
-          border
-          border-gray-300
-          p-2.5
-          rounded-lg
-          w-full
-          mb-4
-          focus:outline-none
-          focus:ring-2
-          focus:ring-blue-500
-          dark:bg-gray-700
-          dark:border-gray-600
-          dark:text-white
-          "
+          placeholder="New Password (min 6 characters)"
+          className="border border-gray-300 p-2.5 rounded-lg w-full mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          minLength={6}
+          required
         />
 
         <button
-          className="
-          w-full
-          bg-blue-600
-          hover:bg-blue-700
-          text-white
-          py-2.5
-          rounded-lg
-          transition
-          "
+          disabled={loading}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg transition disabled:opacity-50"
         >
-          Set Password
+          {loading ? "Setting..." : "Set Password"}
         </button>
       </form>
     </div>

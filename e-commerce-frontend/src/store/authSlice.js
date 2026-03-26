@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   token: localStorage.getItem("jwtToken") || null,
-  user: JSON.parse(localStorage.getItem("userInfo")) || null
+  // Use "user" key consistently — Navbar and all components read from "user"
+  user: JSON.parse(localStorage.getItem("user")) || null,
 };
 
 const authSlice = createSlice({
@@ -14,7 +15,8 @@ const authSlice = createSlice({
       state.user = action.payload.user;
 
       localStorage.setItem("jwtToken", action.payload.token);
-      localStorage.setItem("userInfo", JSON.stringify(action.payload.user));
+      // Store under "user" — consistent with Navbar.jsx
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
     },
 
     logout: (state) => {
@@ -22,9 +24,9 @@ const authSlice = createSlice({
       state.user = null;
 
       localStorage.removeItem("jwtToken");
-      localStorage.removeItem("userInfo");
-    }
-  }
+      localStorage.removeItem("user");
+    },
+  },
 });
 
 export const { setCredentials, logout } = authSlice.actions;

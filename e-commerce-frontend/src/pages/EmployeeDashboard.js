@@ -4,7 +4,6 @@ import { API_URL } from "../utils/api";
 
 function EmployeeDashboard() {
   const [orders, setOrders] = useState([]);
-
   const token = localStorage.getItem("jwtToken");
 
   useEffect(() => {
@@ -14,15 +13,9 @@ function EmployeeDashboard() {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get(
-        `${API_URL}/api/orders/employee/orders`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
+      const res = await axios.get(`${API_URL}/api/orders/employee/orders`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setOrders(res.data);
     } catch (error) {
       console.log(error);
@@ -34,13 +27,8 @@ function EmployeeDashboard() {
       await axios.put(
         `${API_URL}/api/orders/employee/orders/${id}/deliver`,
         {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-
       fetchOrders();
     } catch (error) {
       console.log(error);
@@ -54,7 +42,11 @@ function EmployeeDashboard() {
           Employee Dashboard
         </h1>
 
-        {/* ORDERS TABLE */}
+        {orders.length === 0 && (
+          <p className="text-gray-500 dark:text-gray-400 mb-4">
+            No orders assigned to you.
+          </p>
+        )}
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-x-auto">
           <table className="w-full text-sm sm:text-base">
@@ -68,7 +60,6 @@ function EmployeeDashboard() {
                 <th className="p-3 text-left">Action</th>
               </tr>
             </thead>
-
             <tbody>
               {orders.map((order) => (
                 <tr
@@ -76,21 +67,17 @@ function EmployeeDashboard() {
                   className="border-b dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                 >
                   <td className="p-3 dark:text-white">{order._id.slice(-6)}</td>
-
                   <td className="p-3 dark:text-white">{order.user?.name}</td>
-
                   <td className="p-3 dark:text-white">
                     {order.items.length} items
                   </td>
-
                   <td className="p-3 dark:text-white">${order.totalPrice}</td>
-
                   <td className="p-3">
+                    {/* Fixed: was order.orderStatus — correct field is order.status */}
                     <span className="bg-blue-500 text-white px-3 py-1 rounded text-sm">
-                      {order.orderStatus}
+                      {order.status}
                     </span>
                   </td>
-
                   <td className="p-3">
                     <button
                       onClick={() => markDelivered(order._id)}

@@ -7,16 +7,12 @@ import {
 } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
-
 import { useSelector } from "react-redux";
-import ForceReload from "./components/ForceReload";
 
-// Components
 import Navbar from "./components/Navbar";
 import EmployeeRoute from "./components/EmployeeRoute";
 import AdminRoute from "./components/AdminRoute";
 
-// Pages
 import HomePage from "./pages/HomePage";
 import ProductListPage from "./components/ProductListPage";
 import ProductDetailPage from "./components/ProductDetail";
@@ -28,33 +24,31 @@ import PaymentPage from "./pages/PaymentPage";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import MyProducts from "./pages/MyProducts";
 
-// Admin
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminOrders from "./pages/AdminOrders";
 import AdminProducts from "./pages/AdminProducts";
 import AdminEmployees from "./pages/AdminEmployees";
 
-// Employee
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 
-// Other
 import GoogleSuccess from "./pages/GoogleSuccess";
 import SetPasswordPage from "./pages/SetPasswordPage";
 
-// Auth selector
 import { selectIsAuthenticated } from "./store/authSlice";
 
 // ============================
 // Protected Route
 // ============================
-
 function ProtectedRoute({ element }) {
   const isAuthenticated = useSelector(selectIsAuthenticated);
-
   return isAuthenticated ? element : <Navigate to="/login" replace />;
 }
 
-function ReloadOnRouteChange() {
+// ============================
+// Scroll to top on route change
+// Fixed: removed duplicate ForceReload component — this one handles it
+// ============================
+function ScrollToTop() {
   const location = useLocation();
 
   useEffect(() => {
@@ -67,45 +61,37 @@ function ReloadOnRouteChange() {
 // ============================
 // App Component
 // ============================
-
 function App() {
-
   return (
     <Router>
       <Navbar />
-      <ForceReload />
-      <ReloadOnRouteChange />
+      <ScrollToTop />
       <Routes>
-        {/* PUBLIC ROUTES */}
-
+        {/* PUBLIC */}
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductListPage />} />
         <Route path="/products/:id" element={<ProductDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-
         <Route path="/google-success" element={<GoogleSuccess />} />
         <Route path="/set-password/:token" element={<SetPasswordPage />} />
 
         {/* CART + CHECKOUT */}
-
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/payment" element={<PaymentPage />} />
 
-        {/* USER ROUTES */}
-
+        {/* USER */}
         <Route
           path="/orders"
           element={<ProtectedRoute element={<OrderHistoryPage />} />}
         />
-
         <Route
           path="/my-products"
           element={<ProtectedRoute element={<MyProducts />} />}
         />
 
-        {/* ADMIN ROUTES */}
+        {/* ADMIN */}
         <Route
           path="/admin"
           element={
@@ -114,7 +100,6 @@ function App() {
             </AdminRoute>
           }
         />
-
         <Route
           path="/admin/orders"
           element={
@@ -123,7 +108,6 @@ function App() {
             </AdminRoute>
           }
         />
-
         <Route
           path="/admin/products"
           element={
@@ -132,7 +116,6 @@ function App() {
             </AdminRoute>
           }
         />
-
         <Route
           path="/admin/employees"
           element={
@@ -142,8 +125,7 @@ function App() {
           }
         />
 
-        {/* EMPLOYEE ROUTES */}
-
+        {/* EMPLOYEE */}
         <Route
           path="/employee"
           element={
