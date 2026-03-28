@@ -1,13 +1,15 @@
-import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import path from "path";
+import { createRequire } from "module";
 
-// Get the directory of server.js regardless of where node is run from
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Point dotenv to the exact .env file location
-dotenv.config({ path: path.join(__dirname, ".env") });
+// Only load .env file in local development
+// In production (Render), env vars are set via the dashboard
+if (process.env.NODE_ENV !== "production") {
+  const { default: dotenv } = await import("dotenv");
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  dotenv.config({ path: path.join(__dirname, ".env") });
+}
 
 import express from "express";
 import cors from "cors";
