@@ -89,11 +89,12 @@ function RegisterPage() {
           <hr className="flex-grow border-gray-300 dark:border-gray-600" />
         </div>
         {/* Fixed: was hardcoded production URL, now uses API_URL */}
-        href={`${API_URL}/api/auth/google`}
-        className="flex items-center justify-center gap-3 w-full border
+        <a
+          href={`${API_URL}/api/auth/google`}
+          className="flex items-center justify-center gap-3 w-full border
         border-gray-300 bg-white text-gray-700 py-2.5 rounded-lg shadow-sm
         hover:bg-gray-100 transition"
-        <a>
+        >
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
             alt="Google"
