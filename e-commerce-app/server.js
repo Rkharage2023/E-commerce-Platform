@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { fileURLToPath } from "url";
 import path from "path";
 import { createRequire } from "module";
@@ -63,4 +64,16 @@ app.get("/", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+// Temporary debug route — shows which database is connected
+app.get("/debug", (req, res) => {
+  res.json({
+    dbName: mongoose.connection.name,
+    dbHost: mongoose.connection.host,
+    mongoUri: process.env.MONGO_URI
+      ? process.env.MONGO_URI.substring(0, 50) + "..."
+      : "NOT SET",
+    nodeEnv: process.env.NODE_ENV,
+  });
 });
