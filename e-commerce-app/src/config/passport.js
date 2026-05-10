@@ -1,6 +1,4 @@
-import dotenv from "dotenv";
-dotenv.config();
-
+// NO dotenv import here — env vars are loaded in server.js before this runs
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/User.js";
@@ -10,10 +8,8 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      // Use env var so this works in both local and production
       callbackURL: `${process.env.BACKEND_URL}/api/auth/google/callback`,
     },
-
     async (accessToken, refreshToken, profile, done) => {
       try {
         let user = await User.findOne({ email: profile.emails[0].value });

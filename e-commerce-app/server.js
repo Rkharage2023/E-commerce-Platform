@@ -1,7 +1,9 @@
+import "dotenv/config";
 import mongoose from "mongoose";
 import { fileURLToPath } from "url";
 import path from "path";
 import { createRequire } from "module";
+import sendEmail from "./src/utils/sendEmail.js";
 
 // Only load .env file in local development
 // In production (Render), env vars are set via the dashboard
@@ -41,7 +43,7 @@ app.use(limiter);
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "*",
+    origin: ["https://eproductsplatform.netlify.app", "http://localhost:3000"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
@@ -76,4 +78,40 @@ app.get("/debug", (req, res) => {
       : "NOT SET",
     nodeEnv: process.env.NODE_ENV,
   });
+});
+app.get("/test-email", async (req, res) => {
+  try {
+    console.log("EMAIL:", process.env.EMAIL);
+    console.log("EMAIL_PASSWORD set:", !!process.env.EMAIL_PASSWORD);
+    console.log(
+      "PASSWORD length:",
+      process.env.EMAIL_PASSWORD?.replace(/\s/g, "").length,
+    );
+
+    await sendEmail(
+      process.env.EMAIL,
+      "Test Email from ShopHub",
+      "<h1>Test email working!</h1>",
+    );
+    res.json({ message: "Email sent successfully" });
+  } catch (error) {
+    res.status(500).json({
+      message: "Email failed",
+      error: error.message,
+    });
+  }
+});
+
+app.get("/test-db", async (req, res) => {
+  try {
+    const User = (await import("./src/models/User.js")).default;
+    const count = await User.countDocuments();
+    res.json({
+      message: "DB working",
+      userCount: count,
+      dbName: mongoose.connection.name,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });

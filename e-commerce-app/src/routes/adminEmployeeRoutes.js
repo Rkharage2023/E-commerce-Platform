@@ -41,7 +41,6 @@ router.post("/invite", protect, admin, async (req, res) => {
     }
 
     let user = await User.findOne({ email });
-
     const token = crypto.randomBytes(32).toString("hex");
 
     if (!user) {
@@ -63,33 +62,64 @@ router.post("/invite", protect, admin, async (req, res) => {
 
     await sendEmail(
       email,
-      "Employee Invitation",
+      "Employee Invitation - ShopHub",
       `
-<h3>You are invited to the Admin Panel</h3>
-<p>Click the link below to create your password</p>
-<a href="${link}">${link}</a>
-`,
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #2563eb;">You're invited to ShopHub!</h2>
+        <p>Hi ${name},</p>
+        <p>You have been invited to join ShopHub as an employee.</p>
+        <p>Click the button below to set your password and activate your account:</p>
+        <a href="${link}" 
+           style="display: inline-block; background: #2563eb; color: white; 
+                  padding: 12px 24px; border-radius: 8px; text-decoration: none; 
+                  margin: 16px 0;">
+          Set Password
+        </a>
+        <p style="color: #666; font-size: 14px;">
+          This link expires in 24 hours.
+        </p>
+        <p style="color: #666; font-size: 12px;">
+          If the button doesn't work, copy this link: ${link}
+        </p>
+      </div>
+      `,
     );
 
     res.json({ message: "Invite sent successfully" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to send invite email" });
+    // Log the actual error so you can see it in Render logs
+    console.error("Invite Error:", error.message);
+    res.status(500).json({
+      message: "Failed to send invite email",
+      error: error.message, // Shows actual error in response
+    });
   }
 });
 
 // ==========================
 // CREATE EMPLOYEE
 // ==========================
+// CREATE EMPLOYEE
 router.post("/", protect, admin, async (req, res) => {
   try {
     const { name, email } = req.body;
 
+    if (!name || !email) {
+      return res.status(400).json({ message: "Name and email are required" });
+    }
+
+    // Check if employee already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ message: "Employee with this email already exists" });
+    }
+
     const tempPassword = generateTempPassword();
-    // Hash password once here — User model has no pre-save hook
     const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
-    await User.create({
+    const employee = await User.create({
       name,
       email,
       password: hashedPassword,
@@ -98,12 +128,20 @@ router.post("/", protect, admin, async (req, res) => {
     });
 
     res.json({
-      message: "Employee created",
+      message: "Employee created successfully",
       tempPassword,
+      employee: {
+        _id: employee._id,
+        name: employee.name,
+        email: employee.email,
+      },
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Employee creation failed" });
+    console.error("Create Employee Error:", error.message);
+    res.status(500).json({
+      message: "Employee creation failed",
+      error: error.message,
+    });
   }
 });
 

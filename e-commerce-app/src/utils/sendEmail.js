@@ -1,27 +1,38 @@
 import nodemailer from "nodemailer";
 
-const sendEmail = async (email, subject, message) => {
-  try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
+const sendEmail = async (to, subject, html) => {
+  const emailUser = process.env.EMAIL;
+  const emailPass = (process.env.EMAIL_PASSWORD || "").replace(/\s/g, "");
 
-    await transporter.sendMail({
-      from: `"Ecommerce Platform" <${process.env.EMAIL}>`,
-      to: email,
-      subject,
-      html: message,
-    });
+  console.log("Sending email to:", to);
+  console.log("From:", emailUser);
+  console.log("Pass length:", emailPass.length);
 
-    console.log("Email sent successfully");
-  } catch (error) {
-    console.error("Email Error:", error);
-    throw error;
+  if (!emailUser || !emailPass) {
+    throw new Error(
+      `Missing credentials — EMAIL: ${!!emailUser}, PASS: ${!!emailPass}`,
+    );
   }
+
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: emailUser,
+      pass: emailPass,
+    },
+  });
+
+  const info = await transporter.sendMail({
+    from: `"ShopHub" <${emailUser}>`,
+    to,
+    subject,
+    html,
+  });
+
+  console.log("Email sent successfully:", info.messageId);
+  return info;
 };
 
 export default sendEmail;
