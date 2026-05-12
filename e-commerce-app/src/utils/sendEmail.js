@@ -4,10 +4,6 @@ const sendEmail = async (to, subject, html) => {
   const emailUser = process.env.EMAIL;
   const emailPass = (process.env.EMAIL_PASSWORD || "").replace(/\s/g, "");
 
-  console.log("Sending email to:", to);
-  console.log("From:", emailUser);
-  console.log("Pass length:", emailPass.length);
-
   if (!emailUser || !emailPass) {
     throw new Error(
       `Missing credentials — EMAIL: ${!!emailUser}, PASS: ${!!emailPass}`,
@@ -16,8 +12,13 @@ const sendEmail = async (to, subject, html) => {
 
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
+    port: 587, // Changed from 465 to 587
+    secure: false, // Changed from true to false (STARTTLS)
+    requireTLS: true, // Force TLS upgrade
+    tls: {
+      rejectUnauthorized: false,
+    },
+    family: 4,
     auth: {
       user: emailUser,
       pass: emailPass,
@@ -31,7 +32,7 @@ const sendEmail = async (to, subject, html) => {
     html,
   });
 
-  console.log("Email sent successfully:", info.messageId);
+  console.log("Email sent:", info.messageId);
   return info;
 };
 

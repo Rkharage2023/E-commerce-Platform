@@ -128,4 +128,14 @@ router.delete("/:id", protect, admin, async (req, res) => {
   }
 });
 
+// Add this specific route for the "Featured" section on Home
+router.get("/featured", async (req, res) => {
+  try {
+    const products = await Product.find({}).limit(4).sort({ createdAt: -1 });
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching featured products" });
+  }
+});
+
 export default router;
